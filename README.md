@@ -1,6 +1,12 @@
 # 491A_Project
 
+node version 22.14.0
+
+npm version 10.9.2
+
 npx expo start
+
+[Expo Documentation](https://docs.expo.dev/)
 
 After running the above command:
 
