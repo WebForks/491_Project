@@ -1,5 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { Link, Stack } from "expo-router";
+import "./global.css";
 
 export default function NotFoundScreen() {
   return (
