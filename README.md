@@ -6,6 +6,8 @@ npm version 10.9.2
 
 npx expo start
 
+https://trello.com/invite/b/67b625551da0da7fd12295a6/ATTIcfa1eef9867235c873a3b22b0f158cfbFA4B067C/491b-sprint-1
+
 [Expo Documentation](https://docs.expo.dev/)
 
 After running the above command:
