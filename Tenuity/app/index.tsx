@@ -35,9 +35,11 @@ export default function App() {
         />
 
         {/* Sign In Button */}
-        <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
-          <Text className="text-white font-bold">Sign In</Text>
-        </TouchableOpacity>
+        <Link href="/dashboard" asChild>
+          <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
+            <Text className="text-white font-bold">Sign In</Text>
+          </TouchableOpacity>
+        </Link>
 
         {/* Forgot Password & Create Account */}
         <TouchableOpacity className="mb-2">
