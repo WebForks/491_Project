@@ -46,7 +46,9 @@ export default function App() {
           </Link>
         </TouchableOpacity>
         <TouchableOpacity className="mb-4">
-          <Text className="text-blue-500 text-center">Create Account</Text>
+          <Link href="/create-account">
+            <Text className="text-blue-500 text-center">Create Account</Text>
+          </Link>
         </TouchableOpacity>
 
         {/* Landlord/Tenant Toggle */}
