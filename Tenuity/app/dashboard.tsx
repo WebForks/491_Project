@@ -34,10 +34,11 @@ export default function Dashboard() {
           </Pressable>
         </Link>
 
-        <TouchableOpacity>
-          {/* Placeholder for a profile or menu icon */}
-          <AntDesign name="user" size={35} color="black" />
-        </TouchableOpacity>
+        <Link href="/profile-landlord" asChild>
+          <TouchableOpacity>
+            <AntDesign name="user" size={35} color="black" />
+          </TouchableOpacity>
+        </Link>
       </View>
 
       <View className="border-2 border-blue-300 rounded-lg p-4 mb-4">
