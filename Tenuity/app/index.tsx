@@ -1,6 +1,7 @@
 // Tenuity/app/index.tsx (or App.tsx if you're not using file-based routing)
 import React, { useState } from "react";
 import { View, Text, TextInput, Image, TouchableOpacity } from "react-native";
+import { Link } from "expo-router";
 import "../global.css";
 
 export default function App() {
@@ -40,7 +41,9 @@ export default function App() {
 
         {/* Forgot Password & Create Account */}
         <TouchableOpacity className="mb-2">
-          <Text className="text-blue-500 text-center">Forgot password?</Text>
+          <Link href="/forgot-password">
+            <Text className="text-blue-500 text-center">Forgot password?</Text>
+          </Link>
         </TouchableOpacity>
         <TouchableOpacity className="mb-4">
           <Text className="text-blue-500 text-center">Create Account</Text>
