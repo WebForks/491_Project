@@ -1,8 +1,16 @@
 # 491A_Project
 
+Install Nodejs and it to PATH
+
+Check:
+
 node version 22.14.0
 
 npm version 10.9.2
+
+Make sure you cd Tenuity
+
+npm install
 
 npx expo start
 
