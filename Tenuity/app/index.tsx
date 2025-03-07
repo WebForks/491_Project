@@ -1,11 +1,55 @@
 // Tenuity/app/index.tsx (or App.tsx if you're not using file-based routing)
-import React, { useState } from "react";
-import { View, Text, TextInput, Image, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  Alert,
+  AppState,
+  View,
+  Text,
+  TextInput,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { Link } from "expo-router";
 import "../global.css";
+import { supabase } from "../utils/supabase";
 
 export default function App() {
   const [isLandlord, setIsLandlord] = useState(true);
+
+  // Variables used for facilitating signin logic
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Start/stop auto-refresh based on app state
+  useEffect(() => {
+    const listener = AppState.addEventListener("change", (state) => {
+      if (state == "active") {
+        supabase.auth.startAutoRefresh();
+      } else {
+        supabase.auth.stopAutoRefresh();
+      }
+    });
+
+    return () => listener.remove();
+  }, []);
+
+  // Signing in
+  async function signIn() {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      Alert.alert("Login failed :(", error.message);
+    } else {
+      Alert.alert("Success", "You are signed in!");
+      // this is where we will then navigate the user to their respective dashboard
+    }
+    setLoading(false);
+  }
 
   return (
     <View className="flex-1 bg-white items-center justify-center px-4">
@@ -26,17 +70,24 @@ export default function App() {
           keyboardType="email-address"
           autoCapitalize="none"
           className="border border-blue-300 rounded p-3 mb-3"
+          value={email}
+          onChangeText={setEmail}
         />
         {/* Password Field */}
         <TextInput
           placeholder="Password"
           secureTextEntry
           className="border border-blue-300 rounded p-3 mb-4"
+          value={password}
+          onChangeText={setPassword}
         />
 
         {/* Sign In Button */}
         <Link href="/dashboard" asChild>
-          <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
+          <TouchableOpacity
+            className="bg-blue-500 w-full py-3 rounded items-center mb-4"
+            onPress={signIn}
+          >
             <Text className="text-white font-bold">Sign In</Text>
           </TouchableOpacity>
         </Link>
