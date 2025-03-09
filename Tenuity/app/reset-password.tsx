@@ -1,8 +1,43 @@
 // tenuity/apps/reset-password.tsx
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { supabase } from "@/utils/supabase";
+import { React, useState } from "react";
+import {
+  Alert,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 
 export default function ResetPassword() {
+  // first time the password is entered
+  const [newPassword, setNewPassword] = useState("");
+  // password confirmation
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Changes the users password upon clicking "Reset Password"
+  async function changePassword() {
+    // First need to do a check to make sure the two passwords are the same
+    if (newPassword === confirmPassword) {
+      // Also need to make sure that the passwords follow the pre-defined schema
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) {
+        console.log("Error while changing password:", error);
+      } else {
+        console.log("Successfull changed password!");
+      }
+    } else {
+      // Alert on phone -- for testing purposes only!
+      Alert.alert("Passwords Don't Match!");
+      // Terminal error
+      console.log("Passwords Don't Match!");
+    }
+  }
+
   return (
     <View className="flex-1 bg-white px-4 justify-center items-center">
       {/* Logo & Title */}
@@ -22,6 +57,8 @@ export default function ResetPassword() {
         {/* New Password Field */}
         <TextInput
           placeholder="New Password"
+          value={newPassword}
+          onChangeText={setNewPassword}
           secureTextEntry
           className="border border-blue-300 rounded p-3 mb-3"
         />
@@ -29,12 +66,17 @@ export default function ResetPassword() {
         {/* Repeat New Password Field */}
         <TextInput
           placeholder="Repeat New Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
           secureTextEntry
           className="border border-blue-300 rounded p-3 mb-4"
         />
 
         {/* Reset Password Button */}
-        <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center">
+        <TouchableOpacity
+          onPress={changePassword}
+          className="bg-blue-500 w-full py-3 rounded items-center"
+        >
           <Text className="text-white font-bold">Reset Password</Text>
         </TouchableOpacity>
       </View>

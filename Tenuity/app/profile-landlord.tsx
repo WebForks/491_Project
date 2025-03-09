@@ -4,7 +4,8 @@ import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import "../global.css";
-{/*TO DOS:
+{
+  /*TO DOS:
   - Add the ability to change profile picture
   - Add links to some of the pages
   - Connect to sidebar
@@ -15,7 +16,6 @@ import "../global.css";
 export default function ProfileLandlord() {
   return (
     <View className="flex-1 bg-white p-4">
-
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity>
@@ -55,7 +55,9 @@ export default function ProfileLandlord() {
       </TouchableOpacity>
 
       <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
-        <Text className="text-white font-bold">Change Password</Text>
+        <Link href="/reset-password">
+          <Text className="text-white font-bold">Change Password</Text>
+        </Link>
       </TouchableOpacity>
 
       <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
@@ -67,7 +69,7 @@ export default function ProfileLandlord() {
           <Text className="text-white font-bold">Logout</Text>
         </TouchableOpacity>
       </Link>
-    
+
       {/* Footer */}
       <View className="items-center mt-8">
         <Text className="text-gray-500">Copyright @ Tenuity 2025</Text>
@@ -75,3 +77,4 @@ export default function ProfileLandlord() {
     </View>
   );
 }
+
