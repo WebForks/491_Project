@@ -14,67 +14,44 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Adding user to the landlord tabl
-const createUser = async(user) => {
-  const {error} = await supabase
-  .from('Landlords')
-  .insert([
-      {
-        id: user.id,
-        email: user.email,
-        password: user.password,
-        first_name: "Jesse",
-        last_name: "Pinkman",
-        phone_number: "123-456-7890"
-      }
-    ])
+const createUser = async (user) => {
+  const { error } = await supabase.from("Landlords").insert([
+    {
+      id: user.id,
+      email: user.email,
+      password: user.password,
+      first_name: "Jesse",
+      last_name: "Pinkman",
+      phone_number: "123-456-7890",
+    },
+  ]);
 
-  if(error) {
-    console.log("Error while adding user to the table:",error);
+  if (error) {
+    console.log("Error while adding user to the table:", error);
   } else {
-    console.log("Successfully created user!:", user.email)
+    console.log("Successfully created user!:", user.email);
   }
-}
-
-
+};
 
 // Signing up a test user with hard coded values
-const signUpUser = async() => {
-  
-  const {data,error} = await supabase.auth.signUp({
+const signUpUser = async () => {
+  const { data, error } = await supabase.auth.signUp({
     email: "jessepinkman@gmail.com",
     password: "password",
-    email_confirm: false
+    email_confirm: false,
   });
 
-  if(error){
+  if (error) {
     console.log("Error:", error);
-  } else{
+  } else {
     console.log("Successfully signed up user!");
   }
-
-  // Manually confirm user using Admin API
-  if (data.user) {
-    const { error: confirmError } = await supabase.auth.admin.updateUserById(
-      data.user.id, // User ID
-      { email_confirmed_at: new Date().toISOString() } // Confirm email
-    );
-
-    if (confirmError) {
-      console.error("Error confirming user:", confirmError.message);
-      return;
-    }
-
-    console.log("User successfully confirmed!");
-  }
-
-
-
   const user = data.user;
 
-  if(user) {
+  if (user) {
     await createUser(user);
   }
-}
+};
 
 // Calling function to complete manually insertion to the database
 signUpUser();
