@@ -9,7 +9,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import "../global.css";
 import { supabase } from "../utils/supabase";
 
@@ -45,8 +45,10 @@ export default function App() {
     if (error) {
       Alert.alert("Login failed :(", error.message);
     } else {
+      // Keep this only for testing
       Alert.alert("Success", "You are signed in!");
-      // this is where we will then navigate the user to their respective dashboard
+      // Navigating the user to their respective dashboard once they login
+      router.navigate("/dashboard");
     }
     setLoading(false);
   }
@@ -83,14 +85,12 @@ export default function App() {
         />
 
         {/* Sign In Button */}
-        <Link href="/dashboard" asChild>
-          <TouchableOpacity
-            className="bg-blue-500 w-full py-3 rounded items-center mb-4"
-            onPress={signIn}
-          >
-            <Text className="text-white font-bold">Sign In</Text>
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity
+          className="bg-blue-500 w-full py-3 rounded items-center mb-4"
+          onPress={signIn}
+        >
+          <Text className="text-white font-bold">Sign In</Text>
+        </TouchableOpacity>
 
         {/* Forgot Password & Create Account */}
         <TouchableOpacity className="mb-2">
