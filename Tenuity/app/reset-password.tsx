@@ -1,5 +1,6 @@
 // tenuity/apps/reset-password.tsx
 import { supabase } from "@/utils/supabase";
+import { router } from "expo-router";
 import { React, useState } from "react";
 import {
   Alert,
@@ -27,8 +28,14 @@ export default function ResetPassword() {
 
       if (error) {
         console.log("Error while changing password:", error);
+        Alert.alert("Error while changing password!");
       } else {
+        Alert.alert("Successfull changed password!");
         console.log("Successfull changed password!");
+        // navigating to the dashboard -- assuming user changed password from profile screen
+        router.navigate("/profile-landlord");
+        // There needs to be a check if the user came here from a "forgot password" email
+        // in that case the user should be directed back to the login screen
       }
     } else {
       // Alert on phone -- for testing purposes only!
