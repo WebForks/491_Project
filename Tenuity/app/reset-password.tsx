@@ -1,7 +1,7 @@
 // tenuity/apps/reset-password.tsx
 import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
-import { React, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   View,

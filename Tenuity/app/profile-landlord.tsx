@@ -54,11 +54,11 @@ export default function ProfileLandlord() {
         <Text className="text-white font-bold">Change Email</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
-        <Link href="/reset-password">
-          <Text className="text-white font-bold">Change Password</Text>
-        </Link>
-      </TouchableOpacity>
+      <Link href="/reset-password" asChild>
+        <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
+            <Text className="text-white font-bold">Change Password</Text>
+        </TouchableOpacity>
+      </Link>
 
       <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
         <Text className="text-white font-bold">Payment Preferences</Text>
