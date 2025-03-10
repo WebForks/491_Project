@@ -1,19 +1,71 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
-import { View, Text, Image, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, Image, TouchableOpacity, SafeAreaView, Alert } from "react-native";
 import { Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import * as ImagePicker from 'expo-image-picker';
 import "../global.css";
 
 {
   /*TO DOS:
-  - Add the ability to change profile picture
   - Add links to some of the pages
   - Connect to sidebar
   */
 }
 
 export default function ProfileLandlord() {
+  const [profileImage, setProfileImage] = useState(require("../assets/images/react-logo.png"));
+
+  useEffect(() => {
+    (async () => {
+      const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
+      const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (cameraStatus.status !== 'granted' || mediaLibraryStatus.status !== 'granted') {
+        alert('Sorry, we need camera and media library permissions to make this work!');
+      }
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setProfileImage({ uri: result.assets[0].uri });
+    }
+  };
+
+  const takePhoto = async () => {
+    console.log("takePhoto function called");
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setProfileImage({ uri: result.assets[0].uri });
+    }
+  };
+
+  const changeProfilePicture = () => {
+    Alert.alert(
+      "Change Profile Picture",
+      "Choose an option",
+      [
+        {text: "Cancel", style: "cancel" },
+        {text: "Choose from Gallery", onPress: pickImage },
+        {text: "Take Photo", onPress: takePhoto },
+      ],
+      {cancelable: true }
+    );
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white p-4">
       {/* Header */}
@@ -42,11 +94,18 @@ export default function ProfileLandlord() {
       {/* Profile Details */}
       <View className="w-full max-w-sm border-2 border-[#38B6FF] rounded-lg p-4 mb-4 items-center mx-auto">
         <Text className="text-lg font-semibold mb-2">Jesse Pinkman</Text>
-        <Image
-          source={require("../assets/images/react-logo.png")}
-          className="w-[150px] h-[150px] mb-2 rounded-full"
-          resizeMode="cover"
-        />
+        <TouchableOpacity onPress={changeProfilePicture}>
+          <View className="relative">
+            <Image
+              source={profileImage}
+              className="w-[150px] h-[150px] mb-2 rounded-full"
+              resizeMode="cover"
+            />
+            <View className="absolute bottom-0 right-0 bg-white p-1 rounded-full">
+              <MaterialIcons name="edit" size={20} color="#38B6FF" />
+            </View>
+          </View>
+        </TouchableOpacity>
       </View>
 
       {/* Navigation Links */}
