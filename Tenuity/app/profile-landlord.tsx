@@ -1,16 +1,15 @@
 import React from "react";
 import Entypo from "@expo/vector-icons/Entypo";
-import { View, Text, Image, Pressable, TouchableOpacity, SafeAreaView } from "react-native";
+import { View, Text, Image, TouchableOpacity, SafeAreaView } from "react-native";
 import { Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import "../global.css";
+
 {
   /*TO DOS:
   - Add the ability to change profile picture
   - Add links to some of the pages
   - Connect to sidebar
-  - Make the buttons larger and the edges of the buttons curved
-  - Change the color of the buttons to align with our logo color
   */
 }
 
@@ -41,7 +40,7 @@ export default function ProfileLandlord() {
       </View>
 
       {/* Profile Details */}
-      <View className="w-full max-w-sm border-2 border-blue-300 rounded-lg p-4 mb-4 items-center mx-auto">
+      <View className="w-full max-w-sm border-2 border-[#38B6FF] rounded-lg p-4 mb-4 items-center mx-auto">
         <Text className="text-lg font-semibold mb-2">Jesse Pinkman</Text>
         <Image
           source={require("../assets/images/react-logo.png")}
@@ -51,23 +50,23 @@ export default function ProfileLandlord() {
       </View>
 
       {/* Navigation Links */}
-      <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
-        <Text className="text-white font-bold">Change Email</Text>
+      <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
+        <Text className="text-white font-bold text-lg">Change Email</Text>
       </TouchableOpacity>
 
       <Link href="/reset-password" asChild>
-        <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
-            <Text className="text-white font-bold">Change Password</Text>
+        <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
+            <Text className="text-white font-bold text-lg">Change Password</Text>
         </TouchableOpacity>
       </Link>
 
-      <TouchableOpacity className="bg-blue-500 w-full py-3 rounded items-center mb-4">
-        <Text className="text-white font-bold">Payment Preferences</Text>
+      <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
+        <Text className="text-white font-bold text-lg">Payment Preferences</Text>
       </TouchableOpacity>
 
       <Link href="" asChild>
-        <TouchableOpacity className="bg-red-500 w-full py-3 rounded items-center">
-          <Text className="text-white font-bold">Logout</Text>
+        <TouchableOpacity className="bg-red-500 w-[90%] py-4 rounded-2xl items-center mx-auto">
+          <Text className="text-white font-bold text-lg">Logout</Text>
         </TouchableOpacity>
       </Link>
 
@@ -78,4 +77,3 @@ export default function ProfileLandlord() {
     </SafeAreaView>
   );
 }
-
