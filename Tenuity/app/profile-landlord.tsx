@@ -1,6 +1,6 @@
 import React from "react";
 import Entypo from "@expo/vector-icons/Entypo";
-import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, Image, Pressable, TouchableOpacity, SafeAreaView } from "react-native";
 import { Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import "../global.css";
@@ -11,12 +11,12 @@ import "../global.css";
   - Connect to sidebar
   - Make the buttons larger and the edges of the buttons curved
   - Change the color of the buttons to align with our logo color
-  - Bring the header down to prevent overlapping with the front camera of iphone */
+  */
 }
 
 export default function ProfileLandlord() {
   return (
-    <View className="flex-1 bg-white p-4">
+    <SafeAreaView className="flex-1 bg-white p-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity>
@@ -75,7 +75,7 @@ export default function ProfileLandlord() {
       <View className="items-center mt-8">
         <Text className="text-gray-500">Copyright @ Tenuity 2025</Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
