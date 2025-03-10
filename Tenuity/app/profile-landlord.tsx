@@ -10,7 +10,8 @@ import "../global.css";
   - Add links to some of the pages
   - Connect to sidebar
   - Make the buttons larger and the edges of the buttons curved
-  - Change the color of the buttons to align with our logo color */
+  - Change the color of the buttons to align with our logo color
+  - Bring the header down to prevent overlapping with the front camera of iphone */
 }
 
 export default function ProfileLandlord() {
@@ -41,7 +42,7 @@ export default function ProfileLandlord() {
 
       {/* Profile Details */}
       <View className="w-full max-w-sm border-2 border-blue-300 rounded-lg p-4 mb-4 items-center mx-auto">
-        <Text className="text-lg font-semibold mb-2">John Doe</Text>
+        <Text className="text-lg font-semibold mb-2">Jesse Pinkman</Text>
         <Image
           source={require("../assets/images/react-logo.png")}
           className="w-[150px] h-[150px] mb-2 rounded-full"
