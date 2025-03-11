@@ -34,6 +34,7 @@ export default function SignupLandlord() {
             onChangeText={setName}
             className="border-2 border-[#38B6FF] rounded-lg p-2"
             placeholder="Enter your name"
+            placeholderTextColor="#888"
           />
         </View>
 
@@ -45,6 +46,7 @@ export default function SignupLandlord() {
             className="border-2 border-[#38B6FF] rounded-lg p-2"
             placeholder="Enter your email"
             keyboardType="email-address"
+            placeholderTextColor="#888"
           />
         </View>
 
@@ -56,6 +58,7 @@ export default function SignupLandlord() {
             className="border-2 border-[#38B6FF] rounded-lg p-2"
             placeholder="Enter your phone number"
             keyboardType="phone-pad"
+            placeholderTextColor="#888"
           />
         </View>
 
@@ -68,6 +71,7 @@ export default function SignupLandlord() {
             className="border-2 border-[#38B6FF] rounded-lg p-2"
             placeholder="Enter your password"
             secureTextEntry
+            placeholderTextColor="#888"
           />
         </View>
 
@@ -79,6 +83,7 @@ export default function SignupLandlord() {
             className="border-2 border-[#38B6FF] rounded-lg p-2"
             placeholder="Confirm your password"
             secureTextEntry
+            placeholderTextColor="#888"
           />
         </View>
 
