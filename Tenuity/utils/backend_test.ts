@@ -15,7 +15,9 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Adding user to the landlord table
 const createUser = async (userEmail, userId) => {
+<<<<<<< HEAD
   const { data, error } = await supabase.from("Landlords").insert({
+=======
     id: userId,
     email: userEmail,
     first_name: "Tyler",
@@ -25,7 +27,6 @@ const createUser = async (userEmail, userId) => {
 
   if (error) {
     console.log("Error while adding user to the table:", error);
-    console.log(data);
   } else {
     console.log("Successfully created user!:", userEmail);
   }
@@ -33,6 +34,7 @@ const createUser = async (userEmail, userId) => {
 
 // Signing up a test user with hard coded values
 const signUpUser = async () => {
+<<<<<<< HEAD
   //const { data, error } = await supabase.auth.signUp({
   //email: "tyleralamo20@gmail.com",
   //password: "password",
@@ -44,26 +46,46 @@ const signUpUser = async () => {
   //console.log("Successfully signed up user!");
   //}
 
+=======
   const { data, error } = await supabase.auth.signInWithPassword({
     email: "tyleralamo20@gmail.com",
     password: "password",
   });
+ 
+  if (error){
+    console.log("Error:", error);
+  } else{
+    //const { data, error } = await supabase.auth.getUser();
+    const userEmail = data.user.email;
+    const userId = data.user.id;
+    console.log(userEmail);
+    console.log(userId);
 
-  if (error) {
-    console.log("Error signing in:", error);
+<<<<<<< HEAD
+=======
+    if (data) {
+      await createUser(userEmail, userId);
+    }
   }
+};
+>>>>>>> 3ebf2bad43d0ba365cc549febff719f32ea58c58
 
-  //const { data, error } = await supabase.auth.getUser();
-  console.log(data);
-  const userEmail = data.user.email;
-  const userId = data.user.id;
-  console.log(userEmail);
-  console.log(userId);
 
-  if (data) {
-    await createUser(userEmail, userId);
+// Adding random data into a blank table 
+// This will be the template for how data is added into the database
+// Make sure to disbale RLS for adding to the table -- temp
+const addToDatabase = async() => {
+  const {error} = await supabase
+    .from("Test")
+    .insert({
+      name: "Just Testing", 
+      income: "$80,000"
+    })
+  
+  if(error){
+    console.log("Error while inserting to test table:", error);
   }
 };
 
 // Calling function to complete manually insertion to the database
-signUpUser();
+addAuthUserToDB();
