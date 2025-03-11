@@ -99,7 +99,7 @@ export default function App() {
           </Link>
         </TouchableOpacity>
         <TouchableOpacity className="mb-4">
-          <Link href="/create-account">
+          <Link href="/signup-landlord">
             <Text className="text-blue-500 text-center">Create Account</Text>
           </Link>
         </TouchableOpacity>
