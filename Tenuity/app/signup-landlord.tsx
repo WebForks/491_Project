@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   View,
   Text,
   TextInput,
@@ -8,10 +9,12 @@ import {
   Image,
 } from "react-native";
 import "../global.css";
+import { Link } from "expo-router";
 import { supabase } from "../utils/supabase";
 
 export default function SignupLandlord() {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -38,15 +41,16 @@ export default function SignupLandlord() {
     const { data, error } = await supabase.from("Landlords").insert({
       id: userId,
       email: userEmail,
-      first_name: name,
-      last_name: name,
+      first_name: firstName,
+      last_name: lastName,
       phone_number: phoneNumber,
     });
 
     if (error) {
       console.log("Error while adding user to Landlords:", error);
     } else {
-      console.log("User successfully has been added to Landlords table!");
+      console.log("User successfully has been added to Landlords table!", data);
+      Alert.alert("Successfully created account!");
     }
   };
 
@@ -64,10 +68,21 @@ export default function SignupLandlord() {
       {/* Signup Form */}
       <View className="border-2 border-[#38B6FF] rounded-lg p-4 mx-4">
         <View className="mb-4">
-          <Text className="text-left text-lg mb-1">Name</Text>
+          <Text className="text-left text-lg mb-1">First Name</Text>
           <TextInput
-            value={name}
-            onChangeText={setName}
+            value={firstName}
+            onChangeText={setFirstName}
+            className="border-2 border-[#38B6FF] rounded-lg p-2"
+            placeholder="Enter your name"
+            placeholderTextColor="#888"
+          />
+        </View>
+
+        <View className="mb-4">
+          <Text className="text-left text-lg mb-1">Last Name</Text>
+          <TextInput
+            value={lastName}
+            onChangeText={setLastName}
             className="border-2 border-[#38B6FF] rounded-lg p-2"
             placeholder="Enter your name"
             placeholderTextColor="#888"
@@ -125,13 +140,14 @@ export default function SignupLandlord() {
             placeholderTextColor="#888"
           />
         </View>
-
-        <TouchableOpacity
-          onPress={handleRegister}
-          className="bg-[#38B6FF] w-full py-4 rounded-2xl items-center mb-4"
-        >
-          <Text className="text-white font-bold text-lg">Register</Text>
-        </TouchableOpacity>
+        <Link href="" asChild>
+          <TouchableOpacity
+            onPress={handleRegister}
+            className="bg-[#38B6FF] w-full py-4 rounded-2xl items-center mb-4"
+          >
+            <Text className="text-white font-bold text-lg">Register</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </SafeAreaView>
   );
