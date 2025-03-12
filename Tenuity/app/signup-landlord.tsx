@@ -44,7 +44,7 @@ export default function SignupLandlord() {
   // Add authenticated users to the landlords table
   const addUserToLandlords = async (userEmail, userId) => {
     const { data, error } = await supabase.from("Landlords").insert({
-      id: userId,
+      user_id: userId,
       email: userEmail,
       first_name: firstName,
       last_name: lastName,
@@ -159,4 +159,3 @@ export default function SignupLandlord() {
     </ScrollView>
   );
 }
-
