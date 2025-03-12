@@ -73,15 +73,16 @@ export default function Dashboard() {
         </View>
 
         {/* Add New Property */}
-        <View className="flex-row items-center">
-          <Ionicons name="add-outline" size={24} color="#3ab7ff" />
-          <View>
-            <Text className="font-semibold text-lg">New</Text>
-            <Text className="text-gray-500 text-base">Add new property</Text>
-          </View>
-        </View>
+        <Link href="/addproperty" asChild>
+          <TouchableOpacity className="flex-row items-center space-x-2">
+            <Ionicons name="add-outline" size={24} color="#3ab7ff" />
+            <View>
+              <Text className="font-semibold text-lg">New</Text>
+              <Text className="text-gray-500 text-base">Add new property</Text>
+            </View>
+          </TouchableOpacity>
+        </Link>
       </View>
-
       {/* Maintenance Section */}
       <View className="border-2 border-blue-300 rounded-lg p-4 mb-4">
         <Text className="font-semibold text-xl mb-2">Maintenance</Text>
