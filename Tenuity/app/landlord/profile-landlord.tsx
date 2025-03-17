@@ -89,7 +89,7 @@ export default function ProfileLandlord() {
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
 
-        <Link href="/dashboard" asChild>
+        <Link href="./dashboard" asChild>
           <TouchableOpacity>
             <Image
               source={require("../../assets/images/logo.png")}
@@ -99,7 +99,7 @@ export default function ProfileLandlord() {
           </TouchableOpacity>
         </Link>
 
-        <Link href="/profile-landlord" asChild>
+        <Link href="./profile-landlord" asChild>
           <TouchableOpacity>
             <AntDesign name="user" size={35} color="black" />
           </TouchableOpacity>
@@ -128,7 +128,7 @@ export default function ProfileLandlord() {
         <Text className="text-white font-bold text-lg">Change Email</Text>
       </TouchableOpacity>
 
-      <Link href="/reset-password" asChild>
+      <Link href="./(auth)/reset-password" asChild>
         <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
           <Text className="text-white font-bold text-lg">Change Password</Text>
         </TouchableOpacity>
@@ -153,4 +153,3 @@ export default function ProfileLandlord() {
     </SafeAreaView>
   );
 }
-

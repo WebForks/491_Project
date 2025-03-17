@@ -63,7 +63,7 @@ export default function ForgotPassword() {
         />
 
         {/* Submit Button */}
-        <Link href="" asChild>
+        <Link href="../../" asChild>
           <TouchableOpacity
             onPress={handleResetPassword}
             className="bg-blue-500 w-full py-3 rounded items-center mb-4"

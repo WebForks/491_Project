@@ -75,7 +75,7 @@ export default function Dashboard() {
             />
           </Pressable>
         </Link>
-        <Link href="/profile-landlord" asChild>
+        <Link href="./profile-landlord" asChild>
           <TouchableOpacity>
             <AntDesign name="user" size={35} color="black" />
           </TouchableOpacity>
