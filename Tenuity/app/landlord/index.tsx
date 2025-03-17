@@ -10,8 +10,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Link, router } from "expo-router";
-import "../global.css";
-import { supabase } from "../utils/supabase";
+import "../../global.css";
+import { supabase } from "../../utils/supabase";
 
 export default function App() {
   const [isLandlord, setIsLandlord] = useState(true);
@@ -58,7 +58,7 @@ export default function App() {
       {/* Logo & Title */}
       <View className="items-center mb-8">
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../../assets/images/logo.png")}
           className="w-[170px] h-[170px] mb-1"
           resizeMode="contain"
         />

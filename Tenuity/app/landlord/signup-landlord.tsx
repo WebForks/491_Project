@@ -8,9 +8,9 @@ import {
   SafeAreaView,
   Image,
 } from "react-native";
-import "../global.css";
+import "../../global.css";
 import { Link } from "expo-router";
-import { supabase } from "../utils/supabase";
+import { supabase } from "../../utils/supabase";
 
 export default function SignupLandlord() {
   const [firstName, setFirstName] = useState("");
@@ -59,7 +59,7 @@ export default function SignupLandlord() {
       {/* Header */}
       <View className="items-center mb-8">
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../../assets/images/logo.png")}
           className="w-[150px] h-[150px]"
           resizeMode="contain"
         />

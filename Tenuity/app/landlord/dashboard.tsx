@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Pressable, Image } from "react-native";
 import { Link } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
-import "../global.css";
+import "../../global.css";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -27,7 +27,7 @@ export default function Dashboard() {
         <Link href="/dashboard" asChild>
           <Pressable>
             <Image
-              source={require("../assets/images/logo.png")}
+              source={require("../../assets/images/logo.png")}
               className="w-[100px] h-[100px]"
               resizeMode="contain"
             />

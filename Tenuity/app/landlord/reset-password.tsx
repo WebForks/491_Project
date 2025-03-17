@@ -50,7 +50,7 @@ export default function ResetPassword() {
       {/* Logo & Title */}
       <View className="items-center mb-8">
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../../assets/images/logo.png")}
           className="w-[100px] h-[100px] mb-2"
           resizeMode="contain"
         />

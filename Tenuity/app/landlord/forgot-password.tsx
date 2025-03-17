@@ -9,7 +9,7 @@ import {
   Image,
 } from "react-native";
 import { Link } from "expo-router";
-import "../global.css";
+import "../../global.css";
 import { supabase } from "@/utils/supabase";
 
 // If you're using expo-router Link component, you can import it:
@@ -38,7 +38,7 @@ export default function ForgotPassword() {
       {/* Logo & Title */}
       <View className="items-center mb-8">
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../../assets/images/logo.png")}
           className="w-[170px] h-[170px] mb-2"
           resizeMode="contain"
         />

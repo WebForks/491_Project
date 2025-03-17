@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
-import { View, Text, Image, TouchableOpacity, SafeAreaView, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+} from "react-native";
 import { Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import * as ImagePicker from 'expo-image-picker';
-import "../global.css";
+import * as ImagePicker from "expo-image-picker";
+import "../../global.css";
 
 {
   /*TO DOS:
@@ -15,21 +22,29 @@ import "../global.css";
 }
 
 export default function ProfileLandlord() {
-  const [profileImage, setProfileImage] = useState(require("../assets/images/react-logo.png"));
+  const [profileImage, setProfileImage] = useState(
+    require("../../assets/images/react-logo.png"),
+  );
 
   useEffect(() => {
     (async () => {
       const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
-      const mediaLibraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (cameraStatus.status !== 'granted' || mediaLibraryStatus.status !== 'granted') {
-        alert('Sorry, we need camera and media library permissions to make this work!');
+      const mediaLibraryStatus =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (
+        cameraStatus.status !== "granted" ||
+        mediaLibraryStatus.status !== "granted"
+      ) {
+        alert(
+          "Sorry, we need camera and media library permissions to make this work!",
+        );
       }
     })();
   }, []);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -58,11 +73,11 @@ export default function ProfileLandlord() {
       "Change Profile Picture",
       "Choose an option",
       [
-        {text: "Cancel", style: "cancel" },
-        {text: "Choose from Gallery", onPress: pickImage },
-        {text: "Take Photo", onPress: takePhoto },
+        { text: "Cancel", style: "cancel" },
+        { text: "Choose from Gallery", onPress: pickImage },
+        { text: "Take Photo", onPress: takePhoto },
       ],
-      {cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -77,7 +92,7 @@ export default function ProfileLandlord() {
         <Link href="/dashboard" asChild>
           <TouchableOpacity>
             <Image
-              source={require("../assets/images/logo.png")}
+              source={require("../../assets/images/logo.png")}
               className="w-[100px] h-[100px]"
               resizeMode="contain"
             />
@@ -115,12 +130,14 @@ export default function ProfileLandlord() {
 
       <Link href="/reset-password" asChild>
         <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
-            <Text className="text-white font-bold text-lg">Change Password</Text>
+          <Text className="text-white font-bold text-lg">Change Password</Text>
         </TouchableOpacity>
       </Link>
 
       <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
-        <Text className="text-white font-bold text-lg">Payment Preferences</Text>
+        <Text className="text-white font-bold text-lg">
+          Payment Preferences
+        </Text>
       </TouchableOpacity>
 
       <Link href="" asChild>
@@ -136,3 +153,4 @@ export default function ProfileLandlord() {
     </SafeAreaView>
   );
 }
+
