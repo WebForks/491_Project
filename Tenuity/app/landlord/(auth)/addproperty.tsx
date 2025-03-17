@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { Link } from "expo-router";
-import "../global.css";
+import "../../../global.css";
 import * as ImagePicker from "expo-image-picker";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -9,7 +9,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function addproperty() {
   const [propertyName, setPropertyName] = useState("");
+  const [bedroomCount, setBedroomCount] = useState("");
+  const [bathroomCount, setBathroomCount] = useState("");
   const [description, setDescription] = useState("");
+  const [tenantName, setTenantName] = useState("");
+  const [tenantEmail, setTenantEmail] = useState("");
   const [image, setImage] = useState<string | null>(null);
 
   // Function to handle image selection
@@ -34,17 +38,17 @@ export default function addproperty() {
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
         
-        <Link href="/dashboard" asChild>
+        <Link href="../dashboard" asChild>
           <TouchableOpacity>
             <Image
-              source={require("../assets/images/logo.png")}
+              source={require("../../../assets/images/logo.png")}
               className="w-[100px] h-[100px]"
               resizeMode="contain"
             />
           </TouchableOpacity>
         </Link>
 
-        <Link href="/profile-landlord" asChild>
+        <Link href="../profile-landlord" asChild>
           <TouchableOpacity>
             <AntDesign name="user" size={35} color="black" />
           </TouchableOpacity>
@@ -66,9 +70,8 @@ export default function addproperty() {
       <TextInput
         className="border border-blue-300 p-3 rounded mb-4"
         placeholder="Count"
-        multiline
-        value={description}
-        onChangeText={setDescription}
+        value={bedroomCount}
+        onChangeText={setBedroomCount}
       />
 
       {/* Bathroom Count */}
@@ -76,9 +79,8 @@ export default function addproperty() {
       <TextInput
         className="border border-blue-300 p-3 rounded mb-4"
         placeholder="Count"
-        multiline
-        value={description}
-        onChangeText={setDescription}
+        value={bathroomCount}
+        onChangeText={setBathroomCount}
       />
 
       {/* Description Input */}
@@ -116,23 +118,21 @@ export default function addproperty() {
       <TextInput
         className="border border-blue-300 p-3 rounded mb-4"
         placeholder="Full Name"
-        multiline
-        value={description}
-        onChangeText={setDescription}
+        value={tenantName}
+        onChangeText={setTenantName}
       />
 
-      {/* Tenant E,ao; */}
+      {/* Tenant Email */}
       <Text className="text-lg">Tenant Email</Text>
       <TextInput
         className="border border-blue-300 p-3 rounded mb-4"
         placeholder="Email"
-        multiline
-        value={description}
-        onChangeText={setDescription}
+        value={tenantEmail}
+        onChangeText={setTenantEmail}
       />
 
       {/* Save Property Button */}
-      <Link href="/dashboard" asChild>
+      <Link href="../dashboard" asChild>
         <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex items-center">
           <Text className="text-white text-lg font-semibold">Add Property</Text>
         </TouchableOpacity>

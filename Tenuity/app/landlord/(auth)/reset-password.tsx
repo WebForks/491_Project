@@ -33,7 +33,7 @@ export default function ResetPassword() {
         Alert.alert("Successfull changed password!");
         console.log("Successfull changed password!");
         // navigating to the dashboard -- assuming user changed password from profile screen
-        router.navigate("/profile-landlord");
+        router.navigate("../dashboard");
         // There needs to be a check if the user came here from a "forgot password" email
         // in that case the user should be directed back to the login screen
       }
@@ -50,7 +50,7 @@ export default function ResetPassword() {
       {/* Logo & Title */}
       <View className="items-center mb-8">
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../../../assets/images/logo.png")}
           className="w-[100px] h-[100px] mb-2"
           resizeMode="contain"
         />

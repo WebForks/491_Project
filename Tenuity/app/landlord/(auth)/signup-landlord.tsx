@@ -1,3 +1,7 @@
+/* TO DOS:
+  - Make the footer white like the rest of the page
+  - Figure out how to prevent the keyboard from covering the input fields
+*/
 import React, { useState } from "react";
 import {
   Alert,
@@ -7,10 +11,11 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
+  ScrollView,
 } from "react-native";
-import "../global.css";
+import "../../../global.css";
 import { Link } from "expo-router";
-import { supabase } from "../utils/supabase";
+import { supabase } from "../../../utils/supabase";
 
 export default function SignupLandlord() {
   const [firstName, setFirstName] = useState("");
@@ -39,7 +44,7 @@ export default function SignupLandlord() {
   // Add authenticated users to the landlords table
   const addUserToLandlords = async (userEmail, userId) => {
     const { data, error } = await supabase.from("Landlords").insert({
-      id: userId,
+      user_id: userId,
       email: userEmail,
       first_name: firstName,
       last_name: lastName,
@@ -59,10 +64,24 @@ export default function SignupLandlord() {
       {/* Header */}
       <View className="items-center mb-8">
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../../../assets/images/logo.png")}
           className="w-[150px] h-[150px]"
           resizeMode="contain"
         />
+      </View>
+
+      {/* Signup Form */}
+      <View className="border-2 border-[#38B6FF] rounded-lg p-4 mx-4">
+        <View className="mb-4">
+          <Text className="text-left text-lg mb-1">First Name</Text>
+          <TextInput
+            value={firstName}
+            onChangeText={setFirstName}
+            className="border-2 border-[#38B6FF] rounded-lg p-2"
+            placeholder="Enter your name"
+            placeholderTextColor="#888"
+          />
+        </View>
       </View>
 
       {/* Signup Form */}
@@ -152,4 +171,3 @@ export default function SignupLandlord() {
     </SafeAreaView>
   );
 }
-
