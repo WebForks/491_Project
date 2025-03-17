@@ -1,27 +1,69 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Pressable, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Pressable,
+  Image,
+  ActivityIndicator,
+  FlatList,
+} from "react-native";
 import { Link } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
-import "../../global.css";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-// If you need icons, you can install and import them from @expo/vector-icons,
-// but here we’ll use simple text placeholders for demonstration.
+import { supabase } from "../../utils/supabase";
 
 export default function Dashboard() {
-  const [selectedProperty1, setSelectedProperty1] = useState(false);
-  const [selectedProperty2, setSelectedProperty2] = useState(false);
-  const [selectedIssue1, setSelectedIssue1] = useState(false);
-  const [selectedIssue2, setSelectedIssue2] = useState(false);
+  const [properties, setProperties] = useState<
+    { id: number; address: string }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        // Get the current logged-in user
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+        console.log("user", user);
+
+        if (userError || !user) {
+          console.error("Error fetching user:", userError?.message);
+          return;
+        }
+
+        // Fetch properties where landlord_uuid matches the user's ID
+        const { data, error } = await supabase
+          .from("properties")
+          .select("id, address")
+          .eq("landlord_uuid", user.id);
+
+        if (error) {
+          console.error("Error fetching properties:", error.message);
+        } else {
+          setProperties(data || []);
+        }
+        console.log("properties", data);
+      } catch (err) {
+        console.error("Unexpected error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
 
   return (
     <View className="flex-1 bg-white p-4">
       {/* Top Bar */}
       <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity>
-          {/* Replace with an icon (e.g., Ionicons) if desired */}
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
         <Link href="../landlord/dashboard" asChild>
@@ -33,7 +75,6 @@ export default function Dashboard() {
             />
           </Pressable>
         </Link>
-
         <Link href="/profile-landlord" asChild>
           <TouchableOpacity>
             <AntDesign name="user" size={35} color="black" />
@@ -41,39 +82,35 @@ export default function Dashboard() {
         </Link>
       </View>
 
+      {/* Properties Section */}
       <View className="border-2 border-blue-300 rounded-lg p-4 mb-4">
         <Text className="font-semibold text-xl mb-2">Properties</Text>
 
-        {/* Property 1 */}
-        <View className="flex-row justify-between items-center mb-2">
-          <View className="flex-row items-center">
-            <Pressable
-              onPress={() => setSelectedProperty1(!selectedProperty1)}
-              className={`w-5 h-5 rounded-full border border-blue-300 mr-2 ${
-                selectedProperty1 ? "bg-blue-500" : ""
-              }`}
-            />
-            <Text className="text-lg">123 Sesame St. Long Beach, CA</Text>
-          </View>
-          <MaterialCommunityIcons name="message" size={28} color="#3ab7ff" />
-        </View>
-
-        {/* Property 2 */}
-        <View className="flex-row justify-between items-center mb-2">
-          <View className="flex-row items-center">
-            <Pressable
-              onPress={() => setSelectedProperty2(!selectedProperty2)}
-              className={`w-5 h-5 rounded-full border border-blue-300 mr-2 ${
-                selectedProperty2 ? "bg-blue-500" : ""
-              }`}
-            />
-            <Text className="text-lg">234 Cherry Ave. Long Beach, CA</Text>
-          </View>
-          <MaterialCommunityIcons name="message" size={28} color="#3ab7ff" />
-        </View>
+        {loading ? (
+          <ActivityIndicator size="large" color="#3ab7ff" />
+        ) : properties.length === 0 ? (
+          <Text className="text-gray-500">No properties found.</Text>
+        ) : (
+          <FlatList
+            data={properties}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View className="flex-row justify-between items-center mb-2">
+                <View className="flex-row items-center">
+                  <Text className="text-lg">{item.address}</Text>
+                </View>
+                <MaterialCommunityIcons
+                  name="message"
+                  size={28}
+                  color="#3ab7ff"
+                />
+              </View>
+            )}
+          />
+        )}
 
         {/* Add New Property */}
-        <View className="flex-row items-center">
+        <View className="flex-row items-center mt-2">
           <Ionicons name="add-outline" size={24} color="#3ab7ff" />
           <View>
             <Text className="font-semibold text-lg">New</Text>
@@ -85,45 +122,10 @@ export default function Dashboard() {
       {/* Maintenance Section */}
       <View className="border-2 border-blue-300 rounded-lg p-4 mb-4">
         <Text className="font-semibold text-xl mb-2">Maintenance</Text>
-
-        {/* Maintenance Issue 1 */}
-        <View className="flex-row items-center mb-3">
-          <Pressable
-            onPress={() => setSelectedIssue1(!selectedIssue1)}
-            className="w-5 h-5 border border-blue-300 mr-2 flex justify-center items-center"
-          >
-            {selectedIssue1 && (
-              <MaterialCommunityIcons name="check" size={16} color="blue" />
-            )}
-          </Pressable>
-          <View>
-            <Text className="font-semibold text-lg">Leaky Toilet</Text>
-            <Text className="text-gray-500 text-base">
-              234 Cherry Ave. Long Beach CA
-            </Text>
-          </View>
-        </View>
-
-        {/* Maintenance Issue 2 */}
-        <View className="flex-row items-center">
-          <Pressable
-            onPress={() => setSelectedIssue2(!selectedIssue2)}
-            className="w-5 h-5 border border-blue-300 mr-2 flex justify-center items-center"
-          >
-            {selectedIssue2 && (
-              <MaterialCommunityIcons name="check" size={16} color="blue" />
-            )}
-          </Pressable>
-          <View>
-            <Text className="font-semibold text-lg">Broken Garage Door</Text>
-            <Text className="text-gray-500 text-base">
-              234 Cherry Ave. Long Beach CA
-            </Text>
-          </View>
-        </View>
+        <Text className="text-gray-500">No maintenance issues reported.</Text>
       </View>
 
-      {/* Bottom Bar (e.g., Quick Actions) */}
+      {/* Bottom Bar */}
       <View className="flex-row justify-around mt-auto">
         <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
           <MaterialIcons name="attach-money" size={50} color="white" />
