@@ -24,7 +24,7 @@ export default function Dashboard() {
           {/* Replace with an icon (e.g., Ionicons) if desired */}
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
-        <Link href="/dashboard" asChild>
+        <Link href="../landlord/dashboard" asChild>
           <Pressable>
             <Image
               source={require("../../assets/images/logo.png")}

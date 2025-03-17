@@ -48,7 +48,7 @@ export default function App() {
       // Keep this only for testing
       Alert.alert("Success", "You are signed in!");
       // Navigating the user to their respective dashboard once they login
-      router.navigate("/dashboard");
+      router.navigate("./landlord/dashboard");
     }
     setLoading(false);
   }
@@ -94,12 +94,12 @@ export default function App() {
 
         {/* Forgot Password & Create Account */}
         <TouchableOpacity className="mb-2">
-          <Link href="/forgot-password">
+          <Link href="./landlord/(auth)/forgot-password">
             <Text className="text-blue-500 text-center">Forgot password?</Text>
           </Link>
         </TouchableOpacity>
         <TouchableOpacity className="mb-4">
-          <Link href="/signup-landlord">
+          <Link href="./landlord/(auth)/signup-landlord">
             <Text className="text-blue-500 text-center">Create Account</Text>
           </Link>
         </TouchableOpacity>
