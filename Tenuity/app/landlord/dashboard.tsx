@@ -39,7 +39,7 @@ export default function Dashboard() {
 
         // Fetch properties where landlord_uuid matches the user's ID
         const { data, error } = await supabase
-          .from("properties")
+          .from("Properties")
           .select("id, address")
           .eq("landlord_uuid", user.id);
 
