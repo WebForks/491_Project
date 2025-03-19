@@ -124,9 +124,11 @@ export default function ProfileLandlord() {
       </View>
 
       {/* Navigation Links */}
-      <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
-        <Text className="text-white font-bold text-lg">Change Email</Text>
-      </TouchableOpacity>
+      <Link href="./(auth)/change-email" asChild>
+        <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
+          <Text className="text-white font-bold text-lg">Change Email</Text>
+        </TouchableOpacity>
+      </Link>
 
       <Link href="./(auth)/reset-password" asChild>
         <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
