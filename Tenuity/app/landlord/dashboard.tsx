@@ -9,7 +9,7 @@ import {
   FlatList,
 } from "react-native";
 import Checkbox from "expo-checkbox"; // ✅ Import Expo Checkbox
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
