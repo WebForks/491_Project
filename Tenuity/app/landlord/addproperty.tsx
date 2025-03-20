@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, Alert, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { Link } from "expo-router";
 import "../../global.css";
 import * as ImagePicker from "expo-image-picker";
@@ -133,7 +133,8 @@ export default function addproperty() {
 
       {/* Save Property Button */}
       <Link href="./dashboard" asChild>
-        <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex items-center">
+        <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex items-center"
+        onPress = {() => Alert.alert("Successfully Added Property and Sent Profile Invitation to Tenant")}>
           <Text className="text-white text-lg font-semibold">Add Property</Text>
         </TouchableOpacity>
       </Link>
