@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { Link } from "expo-router";
-import "../../../global.css";
+import "../../global.css";
 import * as ImagePicker from "expo-image-picker";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -38,17 +38,17 @@ export default function addproperty() {
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
         
-        <Link href="../dashboard" asChild>
+        <Link href="./dashboard" asChild>
           <TouchableOpacity>
             <Image
-              source={require("../../../assets/images/logo.png")}
+              source={require("../../assets/images/logo.png")}
               className="w-[100px] h-[100px]"
               resizeMode="contain"
             />
           </TouchableOpacity>
         </Link>
 
-        <Link href="../profile-landlord" asChild>
+        <Link href="./profile-landlord" asChild>
           <TouchableOpacity>
             <AntDesign name="user" size={35} color="black" />
           </TouchableOpacity>
@@ -132,7 +132,7 @@ export default function addproperty() {
       />
 
       {/* Save Property Button */}
-      <Link href="../dashboard" asChild>
+      <Link href="./dashboard" asChild>
         <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex items-center">
           <Text className="text-white text-lg font-semibold">Add Property</Text>
         </TouchableOpacity>
