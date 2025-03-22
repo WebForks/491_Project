@@ -162,7 +162,7 @@ export default function Dashboard() {
         )}
 
         {/* Add New Property */}
-        <Link href="../landlord/addproperty" asChild>
+        <Link href="./addproperty" asChild>
           <TouchableOpacity className="flex-row items-center space-x-2">
             <Ionicons name="add-outline" size={24} color="#3ab7ff" />
             <View>
@@ -217,9 +217,13 @@ export default function Dashboard() {
         <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
           <MaterialIcons name="attach-money" size={50} color="white" />
         </TouchableOpacity>
+        
+        {/* Documents */}
+        <Link href="./documents" asChild>
         <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
           <Ionicons name="documents" size={50} color="white" />
         </TouchableOpacity>
+        </Link>
       </View>
     </View>
   );
