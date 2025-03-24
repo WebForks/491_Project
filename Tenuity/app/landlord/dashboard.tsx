@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   FlatList,
 } from "react-native";
-import { Link } from "expo-router";
+import Checkbox from "expo-checkbox"; // ✅ Import Expo Checkbox
+import { Link, useRouter } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,17 +21,22 @@ export default function Dashboard() {
   const [properties, setProperties] = useState<
     { id: number; address: string }[]
   >([]);
+  const [maintenanceRequests, setMaintenanceRequests] = useState<
+    { id: number; title: string; address: string; completed: boolean }[]
+  >([]);
   const [loading, setLoading] = useState(true);
+  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
+    {}
+  );
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchData = async () => {
       try {
         // Get the current logged-in user
         const {
           data: { user },
           error: userError,
         } = await supabase.auth.getUser();
-        console.log("user", user);
 
         if (userError || !user) {
           console.error("Error fetching user:", userError?.message);
@@ -38,17 +44,46 @@ export default function Dashboard() {
         }
 
         // Fetch properties where landlord_uuid matches the user's ID
-        const { data, error } = await supabase
-          .from("properties")
+        const { data: propertiesData, error: propertiesError } = await supabase
+          .from("Properties")
           .select("id, address")
           .eq("landlord_uuid", user.id);
 
-        if (error) {
-          console.error("Error fetching properties:", error.message);
+        if (propertiesError) {
+          console.error("Error fetching properties:", propertiesError.message);
         } else {
-          setProperties(data || []);
+          setProperties(propertiesData || []);
         }
-        console.log("properties", data);
+
+        // Fetch maintenance requests where landlord_uuid matches user and completed = false
+        const { data: maintenanceData, error: maintenanceError } =
+          await supabase
+            .from("Maintenance")
+            .select("id, title, property_id, completed")
+            .eq("landlord_uuid", user.id)
+            .eq("completed", false);
+
+        if (maintenanceError) {
+          console.error(
+            "Error fetching maintenance requests:",
+            maintenanceError.message
+          );
+        } else {
+          // Cross-reference maintenance requests with properties to get addresses
+          const maintenanceWithAddresses = maintenanceData.map(
+            (maintenance) => {
+              const property = propertiesData?.find(
+                (p) => p.id === maintenance.property_id
+              );
+              return {
+                ...maintenance,
+                address: property ? property.address : "Unknown Address",
+              };
+            }
+          );
+
+          setMaintenanceRequests(maintenanceWithAddresses);
+        }
       } catch (err) {
         console.error("Unexpected error:", err);
       } finally {
@@ -56,8 +91,25 @@ export default function Dashboard() {
       }
     };
 
-    fetchProperties();
+    fetchData();
   }, []);
+
+  // Function to mark maintenance request as complete
+  const markAsCompleted = async (id: number) => {
+    const { error } = await supabase
+      .from("Maintenance")
+      .update({ completed: true })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error updating maintenance:", error.message);
+    } else {
+      // Hide the task by removing it from state
+      setMaintenanceRequests((prev) =>
+        prev.filter((request) => request.id !== id)
+      );
+    }
+  };
 
   return (
     <View className="flex-1 bg-white p-4">
@@ -110,19 +162,54 @@ export default function Dashboard() {
         )}
 
         {/* Add New Property */}
-        <View className="flex-row items-center mt-2">
-          <Ionicons name="add-outline" size={24} color="#3ab7ff" />
-          <View>
-            <Text className="font-semibold text-lg">New</Text>
-            <Text className="text-gray-500 text-base">Add new property</Text>
-          </View>
-        </View>
+        <Link href="./addproperty" asChild>
+          <TouchableOpacity className="flex-row items-center space-x-2">
+            <Ionicons name="add-outline" size={24} color="#3ab7ff" />
+            <View>
+              <Text className="font-semibold text-lg">New</Text>
+              <Text className="text-gray-500 text-base">Add new property</Text>
+            </View>
+          </TouchableOpacity>
+        </Link>
       </View>
 
       {/* Maintenance Section */}
       <View className="border-2 border-blue-300 rounded-lg p-4 mb-4">
         <Text className="font-semibold text-xl mb-2">Maintenance</Text>
-        <Text className="text-gray-500">No maintenance issues reported.</Text>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#3ab7ff" />
+        ) : maintenanceRequests.length === 0 ? (
+          <Text className="text-gray-500">No maintenance issues reported.</Text>
+        ) : (
+          <FlatList
+            data={maintenanceRequests}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View className="flex-row items-center gap-x-4 mb-2">
+                {/* ✅ Checkbox on the left */}
+                <Checkbox
+                  value={checkedItems[item.id] || false}
+                  onValueChange={(newValue) => {
+                    setCheckedItems((prev) => ({
+                      ...prev,
+                      [item.id]: newValue,
+                    }));
+                    if (newValue) {
+                      markAsCompleted(item.id);
+                    }
+                  }}
+                  color={checkedItems[item.id] ? "green" : undefined}
+                />
+                {/* ✅ Text directly next to checkbox */}
+                <View>
+                  <Text className="text-lg font-semibold">{item.title}</Text>
+                  <Text className="text-gray-600">{item.address}</Text>
+                </View>
+              </View>
+            )}
+          />
+        )}
       </View>
 
       {/* Bottom Bar */}
@@ -130,9 +217,13 @@ export default function Dashboard() {
         <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
           <MaterialIcons name="attach-money" size={50} color="white" />
         </TouchableOpacity>
+        
+        {/* Documents */}
+        <Link href="./documents" asChild>
         <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
           <Ionicons name="documents" size={50} color="white" />
         </TouchableOpacity>
+        </Link>
       </View>
     </View>
   );
