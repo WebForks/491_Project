@@ -8,20 +8,18 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import "../../global.css";
-
-{
-  /*TO DOS:
-  - Add links to some of the pages
-  - Connect to sidebar
-  */
-}
+import { useSidebar } from "./_layout";
 
 export default function ProfileLandlord() {
+  const { toggleSidebar } = useSidebar();
+  
+  const router = useRouter(); 
+
   const [profileImage, setProfileImage] = useState(
     require("../../assets/images/react-logo.png"),
   );
@@ -85,25 +83,21 @@ export default function ProfileLandlord() {
     <SafeAreaView className="flex-1 bg-white p-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
 
-        <Link href="./dashboard" asChild>
-          <TouchableOpacity>
-            <Image
-              source={require("../../assets/images/logo.png")}
-              className="w-[100px] h-[100px]"
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity onPress={() => router.push("./dashboard")}>
+          <Image
+            source={require("../../assets/images/logo.png")}
+            className="w-[100px] h-[100px]"
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
 
-        <Link href="./profile-landlord" asChild>
-          <TouchableOpacity>
-            <AntDesign name="user" size={35} color="black" />
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity onPress={() => router.push("./profile-landlord")}>
+          <AntDesign name="user" size={35} color="black" />
+        </TouchableOpacity>
       </View>
 
       {/* Profile Details */}
@@ -124,17 +118,19 @@ export default function ProfileLandlord() {
       </View>
 
       {/* Navigation Links */}
-      <Link href="./(auth)/change-email" asChild>
-        <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
-          <Text className="text-white font-bold text-lg">Change Email</Text>
-        </TouchableOpacity>
-      </Link>
+      <TouchableOpacity
+        onPress={() => router.push("./(auth)/change-email")}
+        className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
+      >
+        <Text className="text-white font-bold text-lg">Change Email</Text>
+      </TouchableOpacity>
 
-      <Link href="./(auth)/reset-password" asChild>
-        <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
-          <Text className="text-white font-bold text-lg">Change Password</Text>
-        </TouchableOpacity>
-      </Link>
+      <TouchableOpacity
+        onPress={() => router.push("./(auth)/reset-password")}
+        className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
+      >
+        <Text className="text-white font-bold text-lg">Change Password</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
         <Text className="text-white font-bold text-lg">
@@ -142,11 +138,12 @@ export default function ProfileLandlord() {
         </Text>
       </TouchableOpacity>
 
-      <Link href="" asChild>
-        <TouchableOpacity className="bg-red-500 w-[90%] py-4 rounded-2xl items-center mx-auto">
-          <Text className="text-white font-bold text-lg">Logout</Text>
-        </TouchableOpacity>
-      </Link>
+      <TouchableOpacity
+        onPress={() => router.push("./(auth)/logout")}
+        className="bg-red-500 w-[90%] py-4 rounded-2xl items-center mx-auto"
+      >
+        <Text className="text-white font-bold text-lg">Logout</Text>
+      </TouchableOpacity>
 
       {/* Footer */}
       <View className="items-center mt-8">
