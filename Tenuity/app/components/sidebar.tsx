@@ -9,7 +9,7 @@ import {
   PanResponder,
 } from "react-native";
 import { BlurView } from "expo-blur";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -23,6 +23,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+	const router = useRouter(); 
   const sidebarAnimation = React.useRef(new Animated.Value(-screenWidth * 0.75)).current;
 
   // Handle swipe gestures
@@ -107,12 +108,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* Sidebar Items */}
           <View style={styles.menuItems}>
-            <Link href="./dashboard" asChild>
-              <TouchableOpacity style={styles.menuItem}>
-                <Entypo name="home" size={24} color="black" />
-                <Text style={styles.menuText}>Home</Text>
-              </TouchableOpacity>
-            </Link>
+            <TouchableOpacity 
+						style={styles.menuItem}
+						onPress={() => router.push("./dashboard")}
+						>
+              <Entypo name="home" size={24} color="black" />
+              <Text style={styles.menuText}>Home</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.menuItem}>
               <MaterialIcons name="attach-money" size={24} color="black" />
               <Text style={styles.menuText}>Financial Dashboard</Text>
@@ -125,7 +127,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               <MaterialCommunityIcons name="wrench-outline" size={24} color="black" />
               <Text style={styles.menuText}>Maintenance</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+            <TouchableOpacity 
+						style={styles.menuItem}
+						onPress={() => router.push("./documents")}
+						>
               <Ionicons name="document-text-outline" size={24} color="black" />
               <Text style={styles.menuText}>Documents</Text>
             </TouchableOpacity>
