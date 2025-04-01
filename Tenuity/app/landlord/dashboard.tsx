@@ -16,8 +16,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { supabase } from "../../utils/supabase";
+import { useSidebar } from "./_layout";
 
 export default function Dashboard() {
+  const { toggleSidebar } = useSidebar(); // Add sidebar toggle function
+  
   const [properties, setProperties] = useState<
     { id: number; address: string }[]
   >([]);
@@ -115,7 +118,7 @@ export default function Dashboard() {
     <View className="flex-1 bg-white p-4">
       {/* Top Bar */}
       <View className="flex-row justify-between items-center mb-4">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
         <Link href="../landlord/dashboard" asChild>
