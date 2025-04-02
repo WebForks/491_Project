@@ -23,7 +23,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
-	const router = useRouter(); 
+  const router = useRouter();
   const sidebarAnimation = React.useRef(new Animated.Value(-screenWidth * 0.75)).current;
 
   // Handle swipe gestures
@@ -66,13 +66,20 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     }).start();
   };
 
-  const closeSidebar = () => {
+  const closeSidebar = (callback?: () => void) => {
     Animated.timing(sidebarAnimation, {
       toValue: -screenWidth * 0.75,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
       onClose();
+      if (callback) callback();
+    });
+  };
+
+  const navigateTo = (path: string) => {
+    closeSidebar(() => {
+      router.push(path); // Navigate to the specified page after the sidebar closes
     });
   };
 
@@ -87,14 +94,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         >
           <TouchableOpacity
             style={StyleSheet.absoluteFillObject} // Ensure it covers the entire screen
-            onPress={closeSidebar} // Close sidebar when tapping on the background
+            onPress={() => closeSidebar()} // Close sidebar when tapping outside
           />
         </BlurView>
       )}
 
       {/* Sidebar */}
       <Animated.View
-        {...panResponder.panHandlers} 
+        {...panResponder.panHandlers}
         style={[
           styles.sidebar,
           { transform: [{ translateX: sidebarAnimation }] },
@@ -102,35 +109,48 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         <View style={styles.sidebarContent}>
           {/* Close Button */}
-          <TouchableOpacity onPress={closeSidebar} style={styles.closeButton}>
+          <TouchableOpacity onPress={() => closeSidebar()} style={styles.closeButton}>
             <Entypo name="cross" size={30} color="black" />
           </TouchableOpacity>
 
           {/* Sidebar Items */}
           <View style={styles.menuItems}>
-            <TouchableOpacity 
-						style={styles.menuItem}
-						onPress={() => router.push("./dashboard")}
-						>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigateTo("./dashboard")} // Navigate to Home (Dashboard)
+            >
               <Entypo name="home" size={24} color="black" />
               <Text style={styles.menuText}>Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigateTo("./financial-dashboard")} // Navigate to Financial Dashboard
+            >
               <MaterialIcons name="attach-money" size={24} color="black" />
               <Text style={styles.menuText}>Financial Dashboard</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigateTo("./messaging")} // Navigate to Messaging
+            >
               <Ionicons name="chatbubble-outline" size={24} color="black" />
               <Text style={styles.menuText}>Messaging</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigateTo("./maintenance")} // Navigate to Maintenance
+            >
               <MaterialCommunityIcons name="wrench-outline" size={24} color="black" />
               <Text style={styles.menuText}>Maintenance</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-						style={styles.menuItem}
-						onPress={() => router.push("./documents")}
-						>
+
+						<TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigateTo("./documents")} // Navigate to Documents
+            >
               <Ionicons name="document-text-outline" size={24} color="black" />
               <Text style={styles.menuText}>Documents</Text>
             </TouchableOpacity>
@@ -163,8 +183,8 @@ const styles = StyleSheet.create({
   closeButton: {
     alignSelf: "flex-end",
     marginBottom: 20,
-    marginRight: 10, 
-    marginTop: 40, 
+    marginRight: 10,
+    marginTop: 40,
   },
   menuItems: {
     marginTop: 20,
