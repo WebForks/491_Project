@@ -6,6 +6,8 @@ import * as ImagePicker from "expo-image-picker";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { supabase } from "../../utils/supabase"; 
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useSidebar } from "./_layout";
 
 export default function addproperty() {
   const [propertyName, setPropertyName] = useState("");
@@ -16,6 +18,7 @@ export default function addproperty() {
   const [tenantEmail, setTenantEmail] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { toggleSidebar } = useSidebar();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -121,7 +124,7 @@ export default function addproperty() {
   return (
     <ScrollView className="flex-1 bg-white p-4">
       <View className="flex-row justify-between items-center mb-4">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
         

@@ -13,6 +13,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useSidebar } from "./_layout";
 
 const initialProperties = [
   { id: 1, name: "Property A", documents: ["Lease Agreement", "Tax Form"] },
@@ -20,6 +21,7 @@ const initialProperties = [
 ];
 
 export default function Documents() {
+  const { toggleSidebar } = useSidebar();
   const [expandedProperty, setExpandedProperty] = useState<number | null>(null);
   const [properties, setProperties] = useState(initialProperties);
   const router = useRouter();
@@ -49,7 +51,7 @@ export default function Documents() {
     <View className="flex-1 bg-white p-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
         <Link href="../landlord/dashboard" asChild>
