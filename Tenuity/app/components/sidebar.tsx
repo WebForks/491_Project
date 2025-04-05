@@ -133,11 +133,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
             <TouchableOpacity
               style={styles.menuItem}
-              onPress={() => navigateTo("./messaging")} // Navigate to Messaging
+              onPress={() => navigateTo("./tenantlist")}
             >
               <Ionicons name="chatbubble-outline" size={24} color="black" />
               <Text style={styles.menuText}>Messaging</Text>
             </TouchableOpacity>
+
 
             <TouchableOpacity
               style={styles.menuItem}

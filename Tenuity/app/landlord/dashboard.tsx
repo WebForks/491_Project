@@ -207,11 +207,13 @@ export default function Dashboard() {
         </Link>
 
         {/* Messaging */}
-        <Link href="./messaging" asChild>
+        <Link href="./tenantlist" asChild>
           <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
             <MaterialIcons name="message" size={50} color="white" />
           </TouchableOpacity>
         </Link>
+
+
       </View>
     </View>
   );
