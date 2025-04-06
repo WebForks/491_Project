@@ -72,6 +72,40 @@ export default function ProfileLandlord() {
   
       console.log("Uploading file from URI:", uri);
   
+      // Fetch the current profile picture path from the database
+      const { data: landlordData, error: landlordError } = await supabase
+        .from("Landlords")
+        .select("profile_pic_path")
+        .eq("user_id", user.user.id)
+        .single();
+  
+      if (landlordError) {
+        console.error("Error fetching landlord data:", landlordError.message);
+        return;
+      }
+  
+      const oldProfilePicPath = landlordData?.profile_pic_path;
+  
+      if (oldProfilePicPath) {
+        const oldFileName = oldProfilePicPath.split("/").slice(-2).join("/"); // Extract the relative path
+        console.log("Old file name to delete:", oldFileName);
+      
+        if (oldFileName) {
+          const { error: deleteError } = await supabase.storage
+            .from("profile-pictures")
+            .remove([oldFileName]);
+      
+          if (deleteError) {
+            console.error("Error deleting old profile picture:", deleteError.message);
+            return;
+          }
+      
+          console.log("Old profile picture deleted successfully");
+        } else {
+          console.error("Could not extract file name from old profile picture path");
+        }
+      }
+  
       // Read the file as Base64
       const base64 = await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -83,7 +117,7 @@ export default function ProfileLandlord() {
       // Generate a unique file name
       const fileName = `profile-pictures/${user.user.id}-${Date.now()}.jpg`;
   
-      // Upload the file to Supabase storage
+      // Upload the new profile picture to Supabase storage
       const { data, error: uploadError } = await supabase.storage
         .from("profile-pictures")
         .upload(fileName, blob, { upsert: true });
@@ -93,7 +127,7 @@ export default function ProfileLandlord() {
         return;
       }
   
-      console.log("File uploaded successfully:", data);
+      console.log("New profile picture uploaded successfully:", data);
   
       // Get the public URL of the uploaded file
       const { data: publicUrlData } = supabase.storage
