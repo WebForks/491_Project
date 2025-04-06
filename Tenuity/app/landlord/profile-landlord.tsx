@@ -221,7 +221,7 @@ export default function ProfileLandlord() {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push("./profile-landlord")}>
+        <TouchableOpacity>
           <AntDesign name="user" size={35} color="black" />
         </TouchableOpacity>
       </View>
@@ -275,7 +275,23 @@ export default function ProfileLandlord() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => router.push("./(auth)/sign-in")}
+        onPress={async () => {
+          try {
+            // Log the user out
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+              console.error("Error logging out:", error.message);
+              return;
+            }
+
+            console.log("User logged out successfully");
+
+            // Redirect to the sign-in page
+            router.push("/");
+          } catch (error) {
+            console.error("Unexpected error during logout:", error);
+          }
+        }}
         className="bg-red-500 w-[90%] py-4 rounded-2xl items-center mx-auto"
       >
         <Text className="text-white font-bold text-lg">Logout</Text>
