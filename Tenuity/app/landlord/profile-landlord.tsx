@@ -14,58 +14,117 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import "../../global.css";
 import { useSidebar } from "./_layout";
+import { supabase } from "../../utils/supabase";
+import * as FileSystem from "expo-file-system";
+import { Buffer } from "buffer";
 
 export default function ProfileLandlord() {
   const { toggleSidebar } = useSidebar();
-  
-  const router = useRouter(); 
+  const router = useRouter();
 
+  const [landlord, setLandlord] = useState<any>(null);
   const [profileImage, setProfileImage] = useState(
-    require("../../assets/images/react-logo.png"),
+    require("../../assets/images/react-logo.png")
   );
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch landlord details on component mount
   useEffect(() => {
-    (async () => {
-      const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
-      const mediaLibraryStatus =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (
-        cameraStatus.status !== "granted" ||
-        mediaLibraryStatus.status !== "granted"
-      ) {
-        alert(
-          "Sorry, we need camera and media library permissions to make this work!",
-        );
+    const fetchLandlordData = async () => {
+      try {
+        const { data: user, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.error("Error fetching user:", userError?.message);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from("Landlords")
+          .select("*")
+          .eq("user_id", user.user.id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching landlord data:", error.message);
+        } else {
+          setLandlord(data);
+          if (data.profile_pic_path) {
+            setProfileImage({ uri: data.profile_pic_path });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching landlord data:", error);
+      } finally {
+        setIsLoading(false);
       }
-    })();
+    };
+
+    fetchLandlordData();
   }, []);
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+  const uploadProfilePicture = async (uri: string) => {
+    try {
+      const { data: user, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        console.error("Error fetching user:", userError?.message);
+        return;
+      }
+  
+      console.log("Uploading file from URI:", uri);
+  
+      // Read the file as Base64
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+  
+      // Convert Base64 to a Blob using the Buffer polyfill
+      const blob = Buffer.from(base64, "base64");
+  
+      // Generate a unique file name
+      const fileName = `profile-pictures/${user.user.id}-${Date.now()}.jpg`;
+  
+      // Upload the file to Supabase storage
+      const { data, error: uploadError } = await supabase.storage
+        .from("profile-pictures")
+        .upload(fileName, blob, { upsert: true });
+  
+      if (uploadError) {
+        console.error("Error uploading profile picture:", uploadError.message);
+        return;
+      }
+  
+      console.log("File uploaded successfully:", data);
+  
+      // Get the public URL of the uploaded file
+      const { data: publicUrlData } = supabase.storage
+        .from("profile-pictures")
+        .getPublicUrl(fileName);
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setProfileImage({ uri: result.assets[0].uri });
+      if (!publicUrlData || !publicUrlData.publicUrl) {
+        console.error("Error fetching public URL");
+        return;
+      }
+  
+      console.log("Public URL of uploaded file:", publicUrlData.publicUrl);
+  
+      // Update the profile picture path in the database
+      const { error: updateError } = await supabase
+        .from("Landlords")
+        .update({ profile_pic_path: publicUrlData.publicUrl })
+        .eq("user_id", user.user.id);
+  
+      if (updateError) {
+        console.error("Error updating profile picture in database:", updateError.message);
+      } else {
+        console.log("Profile picture updated successfully!");
+        setProfileImage({ uri: publicUrlData.publicUrl });
+      }
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
     }
   };
 
-  const takePhoto = async () => {
-    console.log("takePhoto function called");
-    let result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setProfileImage({ uri: result.assets[0].uri });
-    }
-  };
-
+  // Change profile picture
   const changeProfilePicture = () => {
     Alert.alert(
       "Change Profile Picture",
@@ -75,9 +134,42 @@ export default function ProfileLandlord() {
         { text: "Choose from Gallery", onPress: pickImage },
         { text: "Take Photo", onPress: takePhoto },
       ],
-      { cancelable: true },
+      { cancelable: true }
     );
   };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      uploadProfilePicture(result.assets[0].uri);
+    }
+  };
+
+  const takePhoto = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      uploadProfilePicture(result.assets[0].uri);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-white p-4">
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white p-4">
@@ -102,7 +194,17 @@ export default function ProfileLandlord() {
 
       {/* Profile Details */}
       <View className="w-full max-w-sm border-2 border-[#38B6FF] rounded-lg p-4 mb-4 items-center mx-auto">
-        <Text className="text-lg font-semibold mb-2">Jesse Pinkman</Text>
+        {/* First Name and Last Name Fields */}
+        <View className="flex-row justify-center items-center w-full mb-4">
+          <Text className="text-lg font-semibold mr-2">
+            {landlord.first_name || "First Name"}
+          </Text>
+          <Text className="text-lg font-semibold">
+            {landlord.last_name || "Last Name"}
+          </Text>
+        </View>
+
+        {/* Profile Picture */}
         <TouchableOpacity onPress={changeProfilePicture}>
           <View className="relative">
             <Image
@@ -139,7 +241,7 @@ export default function ProfileLandlord() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => router.push("./(auth)/logout")}
+        onPress={() => router.push("./(auth)/sign-in")}
         className="bg-red-500 w-[90%] py-4 rounded-2xl items-center mx-auto"
       >
         <Text className="text-white font-bold text-lg">Logout</Text>
