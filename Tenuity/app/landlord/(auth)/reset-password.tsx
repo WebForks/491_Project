@@ -54,7 +54,6 @@ export default function ResetPassword() {
           className="w-[100px] h-[100px] mb-2"
           resizeMode="contain"
         />
-        <Text className="text-2xl font-bold">Tenuity</Text>
       </View>
 
       {/* Form Container */}
