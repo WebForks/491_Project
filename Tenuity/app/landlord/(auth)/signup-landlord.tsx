@@ -82,20 +82,6 @@ export default function SignupLandlord() {
             placeholderTextColor="#888"
           />
         </View>
-      </View>
-
-      {/* Signup Form */}
-      <View className="border-2 border-[#38B6FF] rounded-lg p-4 mx-4">
-        <View className="mb-4">
-          <Text className="text-left text-lg mb-1">First Name</Text>
-          <TextInput
-            value={firstName}
-            onChangeText={setFirstName}
-            className="border-2 border-[#38B6FF] rounded-lg p-2"
-            placeholder="Enter your name"
-            placeholderTextColor="#888"
-          />
-        </View>
 
         <View className="mb-4">
           <Text className="text-left text-lg mb-1">Last Name</Text>
