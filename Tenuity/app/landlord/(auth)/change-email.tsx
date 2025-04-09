@@ -64,7 +64,6 @@ export default function ChangeEmail() {
           placeholder="New Email"
           value={newEmail}
           onChangeText={setNewEmail}
-          secureTextEntry
           className="border border-blue-300 rounded p-3 mb-3"
         />
 
@@ -73,7 +72,6 @@ export default function ChangeEmail() {
           placeholder="Repeat New Email"
           value={confirmEmail}
           onChangeText={setConfirmEmail}
-          secureTextEntry
           className="border border-blue-300 rounded p-3 mb-4"
         />
 
@@ -88,3 +86,4 @@ export default function ChangeEmail() {
     </View>
   );
 }
+
