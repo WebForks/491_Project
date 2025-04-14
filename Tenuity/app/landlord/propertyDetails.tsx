@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, ActivityIndicator, ScrollView } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { supabase } from "../../utils/supabase";
+import { Link } from "expo-router";
 
 export default function PropertyDetails() {
   const { propertyId } = useLocalSearchParams(); // Retrieve propertyId from URL
@@ -12,8 +13,8 @@ export default function PropertyDetails() {
     const fetchPropertyDetails = async () => {
       try {
         const { data, error } = await supabase
-          .from("properties")
-          .select("id, property_name, bedroom_count, bathroom_count, description, image_url")
+          .from("Properties")
+          .select("id, address, bedroom_count, bathroom_count, description, image_url")
           .eq("id", propertyId)
           .single();
 
@@ -38,7 +39,7 @@ export default function PropertyDetails() {
 
   return (
     <ScrollView className="p-4">
-      <Text className="text-2xl font-semibold">{property?.property_name}</Text>
+      <Text className="text-2xl font-semibold">{property?.address}</Text>
       {property?.image_url && (
         <Image
           source={{ uri: property.image_url }}

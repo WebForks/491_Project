@@ -86,7 +86,19 @@ export default function Documents() {
             >
               <View className="flex-row items-center">
                 <Ionicons name="folder-outline" size={24} color="black" className="mr-2" />
-                <Text className="text-lg font-semibold">{item.name}</Text>
+                <Link
+                  href={{
+                    pathname: "../landlord/propertyDetails",
+                    params: { propertyId: item.id },
+                  }}
+                  asChild
+                >
+                  <Pressable>
+                    <Text className="text-lg font-semibold text-blue-600 underline">
+                      {item.name}
+                    </Text>
+                  </Pressable>
+                </Link>
               </View>
               <Ionicons
                 name={expandedProperty === item.id ? "chevron-down" : "chevron-forward"}

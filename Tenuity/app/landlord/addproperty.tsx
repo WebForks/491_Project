@@ -10,7 +10,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSidebar } from "./_layout";
 
 export default function addproperty() {
-  const [propertyName, setPropertyName] = useState("");
+  const [address, setAddress] = useState("");
   const [bedroomCount, setBedroomCount] = useState("");
   const [bathroomCount, setBathroomCount] = useState("");
   const [description, setDescription] = useState("");
@@ -34,7 +34,7 @@ export default function addproperty() {
   };
 
   const handleAddProperty = async () => {
-    if (!propertyName || !bedroomCount || !bathroomCount || !description) {
+    if (!address || !bedroomCount || !bathroomCount || !description) {
       Alert.alert("Please fill in all the required fields.");
       return;
     }
@@ -46,9 +46,9 @@ export default function addproperty() {
   
       if (userError) throw userError;
   
-      const landlord_id = user?.id;
+      const landlord_uuid = user?.id;
   
-      if (!landlord_id) {
+      if (!landlord_uuid) {
         Alert.alert("Error", "User not authenticated.");
         return;
       }
@@ -65,7 +65,7 @@ export default function addproperty() {
         }
   
         const fileExt = image.split(".").pop();
-        const fileName = `properties/${Date.now()}-${propertyName}.${fileExt}`;
+        const fileName = `Properties/${Date.now()}-${address}.${fileExt}`;
         const filePath = fileName;
   
         const { data, error: uploadError } = await supabase.storage
@@ -85,10 +85,10 @@ export default function addproperty() {
         if (publicUrlData) imageUrl = publicUrlData.publicUrl;
       }
   
-      const { error } = await supabase.from("properties").insert([
+      const { error } = await supabase.from("Properties").insert([
         {
-          landlord_id,
-          property_name: propertyName,
+          landlord_uuid,
+          address: address,
           bedroom_count: bedroomCount,
           bathroom_count: bathroomCount,
           description,
@@ -103,7 +103,7 @@ export default function addproperty() {
       Alert.alert("Property successfully added!");
   
       // Reset form
-      setPropertyName("");
+      setAddress("");
       setBedroomCount("");
       setBathroomCount("");
       setDescription("");
@@ -146,7 +146,7 @@ export default function addproperty() {
       </View>
 
       <Text className="text-lg">Address</Text>
-      <TextInput className="border border-blue-300 p-3 rounded mb-4" placeholder="Full Address" value={propertyName} onChangeText={setPropertyName} />
+      <TextInput className="border border-blue-300 p-3 rounded mb-4" placeholder="Full Address" value={address} onChangeText={setAddress} />
 
       <Text className="text-lg">Bedroom Count</Text>
       <TextInput className="border border-blue-300 p-3 rounded mb-4" placeholder="Count" value={bedroomCount} onChangeText={setBedroomCount} />

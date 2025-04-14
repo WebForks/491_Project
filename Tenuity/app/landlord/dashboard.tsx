@@ -149,26 +149,24 @@ export default function Dashboard() {
             data={properties}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
-              <View className="flex-row justify-between items-center mb-2">
-                <TouchableOpacity
-                  className="bg-blue-100 px-3 py-2 rounded-md"
-                  onPress={() => {
-                    // navigate to property details or handle as needed
-                    console.log("Property clicked:", item.address);
-                  }}
-                >
-                  <Text className="text-lg text-blue-700 font-semibold underline">
-                    {item.address}
-                  </Text>
-                </TouchableOpacity>
-                <MaterialCommunityIcons
-                  name="message"
-                  size={28}
-                  color="#3ab7ff"
-                />
-              </View>
-            )}
-          />
+              <Link
+                href={{
+                  pathname: "../landlord/propertyDetails",
+                  params: { id: item.id, address: item.address },
+                }}
+                asChild
+              >
+                <Pressable className="flex-row items-center justify-between mb-2">
+                  <View className="flex-row items-center">
+                    <View className="w-4 h-4 rounded-full border-2 border-blue-500 bg-white mr-2" />
+                    <Text className="text-lg text-black font-medium">
+                      {item.address}
+                    </Text>
+                  </View>
+                  <MaterialCommunityIcons name="message" size={28} color="#3ab7ff" />
+                </Pressable>
+              </Link>
+            )}/>
         )}
 
         {/* Add New Property */}
