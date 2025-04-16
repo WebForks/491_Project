@@ -16,8 +16,10 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { supabase } from "../../utils/supabase";
+import { useSidebar } from "./_layout";
 
 export default function Dashboard() {
+  const { toggleSidebar } = useSidebar();
   const [properties, setProperties] = useState<
     { id: number; address: string }[]
   >([]);
@@ -26,7 +28,7 @@ export default function Dashboard() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
-    {}
+    {},
   );
 
   useEffect(() => {
@@ -68,20 +70,20 @@ export default function Dashboard() {
         if (maintenanceError) {
           console.error(
             "Error fetching maintenance requests:",
-            maintenanceError.message
+            maintenanceError.message,
           );
         } else {
           // Cross-reference maintenance requests with properties to get addresses
           const maintenanceWithAddresses = maintenanceData.map(
             (maintenance) => {
               const property = propertiesData?.find(
-                (p) => p.id === maintenance.property_id
+                (p) => p.id === maintenance.property_id,
               );
               return {
                 ...maintenance,
                 address: property ? property.address : "Unknown Address",
               };
-            }
+            },
           );
 
           setMaintenanceRequests(maintenanceWithAddresses);
@@ -108,7 +110,7 @@ export default function Dashboard() {
     } else {
       // Hide the task by removing it from state
       setMaintenanceRequests((prev) =>
-        prev.filter((request) => request.id !== id)
+        prev.filter((request) => request.id !== id),
       );
     }
   };
@@ -117,7 +119,7 @@ export default function Dashboard() {
     <View className="flex-1 bg-white p-4">
       {/* Top Bar */}
       <View className="flex-row justify-between items-center mb-4">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
         <Link href="../landlord/dashboard" asChild>
@@ -163,10 +165,15 @@ export default function Dashboard() {
                       {item.address}
                     </Text>
                   </View>
-                  <MaterialCommunityIcons name="message" size={28} color="#3ab7ff" />
+                  <MaterialCommunityIcons
+                    name="message"
+                    size={28}
+                    color="#3ab7ff"
+                  />
                 </Pressable>
               </Link>
-            )}/>
+            )}
+          />
         )}
 
         {/* Add New Property */}
@@ -222,12 +229,18 @@ export default function Dashboard() {
 
       {/* Bottom Bar */}
       <View className="flex-row justify-around mt-auto">
-        <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
-          <MaterialIcons name="attach-money" size={50} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
-          <Ionicons name="documents" size={50} color="white" />
-        </TouchableOpacity>
+        {/* Documents */}
+        <Link href="./documents" asChild>
+          <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
+            <Ionicons name="documents" size={50} color="white" />
+          </TouchableOpacity>
+        </Link>
+        {/* Messaging */}
+        <Link href="./tenantlist" asChild>
+          <TouchableOpacity className="bg-blue-500 p-4 rounded-lg flex-row items-center">
+            <MaterialIcons name="message" size={50} color="white" />
+          </TouchableOpacity>
+        </Link>
       </View>
     </View>
   );
