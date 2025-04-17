@@ -99,6 +99,10 @@ export default function Dashboard() {
     };
 
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Function to mark maintenance request as complete
@@ -125,7 +129,7 @@ export default function Dashboard() {
         <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
-        <Link href="../landlord/dashboard" asChild>
+        <Link href="" asChild>
           <Pressable>
             <Image
               source={require("../../assets/images/logo.png")}
