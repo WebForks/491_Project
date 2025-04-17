@@ -28,10 +28,11 @@ export default function Dashboard() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
-    {},
+    {}
   );
 
   useEffect(() => {
+    let isMounted = true;
     const fetchData = async () => {
       try {
         // Get the current logged-in user
@@ -44,6 +45,8 @@ export default function Dashboard() {
           console.error("Error fetching user:", userError?.message);
           return;
         }
+
+        if (!isMounted) return;
 
         // Fetch properties where landlord_uuid matches the user's ID
         const { data: propertiesData, error: propertiesError } = await supabase
@@ -70,20 +73,20 @@ export default function Dashboard() {
         if (maintenanceError) {
           console.error(
             "Error fetching maintenance requests:",
-            maintenanceError.message,
+            maintenanceError.message
           );
         } else {
           // Cross-reference maintenance requests with properties to get addresses
           const maintenanceWithAddresses = maintenanceData.map(
             (maintenance) => {
               const property = propertiesData?.find(
-                (p) => p.id === maintenance.property_id,
+                (p) => p.id === maintenance.property_id
               );
               return {
                 ...maintenance,
                 address: property ? property.address : "Unknown Address",
               };
-            },
+            }
           );
 
           setMaintenanceRequests(maintenanceWithAddresses);
@@ -110,7 +113,7 @@ export default function Dashboard() {
     } else {
       // Hide the task by removing it from state
       setMaintenanceRequests((prev) =>
-        prev.filter((request) => request.id !== id),
+        prev.filter((request) => request.id !== id)
       );
     }
   };
