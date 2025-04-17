@@ -129,15 +129,14 @@ export default function Dashboard() {
         <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
-        <Link href="" asChild>
-          <Pressable>
-            <Image
-              source={require("../../assets/images/logo.png")}
-              className="w-[100px] h-[100px]"
-              resizeMode="contain"
-            />
-          </Pressable>
-        </Link>
+
+        {/* ✅ Logo shown without linking */}
+        <Image
+          source={require("../../assets/images/logo.png")}
+          className="w-[100px] h-[100px]"
+          resizeMode="contain"
+        />
+
         <Link href="./profile-landlord" asChild>
           <TouchableOpacity>
             <AntDesign name="user" size={35} color="black" />
