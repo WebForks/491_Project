@@ -12,6 +12,8 @@ import {
 import { Link, router } from "expo-router";
 import "../global.css";
 import { supabase } from "../utils/supabase";
+// Testing
+import * as Linking from "expo-linking";
 
 export default function App() {
   const [isLandlord, setIsLandlord] = useState(true);
@@ -36,6 +38,10 @@ export default function App() {
 
   // Signing in
   async function signIn() {
+    //Testing
+    const prefix = Linking.createURL("/");
+    console.log(prefix);
+    //
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
