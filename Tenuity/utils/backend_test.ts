@@ -14,7 +14,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Adding user to the landlord table
-const createUser = async (userEmail, userId) => {
+const createLandlord = async (userEmail, userId) => {
   const { data, error } = await supabase.from("Landlords").insert({
     id: userId,
     email: userEmail,
@@ -79,3 +79,33 @@ const addToDatabase = async () => {
 
 // Calling function to complete manually insertion to the database
 //addAuthUserToDB();
+
+// Signup a test Tenant to the tenuityapp@gmail.com account
+const signUpTenant = async () => {
+  const { data, error } = await supabase.auth.signUp({
+    email: "tenuitytenant@gmail.com",
+    password: "password",
+  });
+
+  if (error) {
+    console.log("Tenant Sign Up Error:", error);
+  } else {
+    const userId = data.user.id;
+    const userEmail = data.user.email;
+    const { Tenantdata, error } = await supabase.from("Landlords").insert({
+      user_id: userId,
+      email: userEmail,
+      first_name: "Tenant",
+      last_name: "Testing",
+      phone_number: "123-456-7890",
+    });
+
+    if (error) {
+      console.log("Error while adding user to the table:", error);
+    } else {
+      console.log("Successfully created tenant!");
+    }
+  }
+};
+
+signUpTenant();
