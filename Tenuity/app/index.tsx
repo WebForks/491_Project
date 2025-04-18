@@ -44,6 +44,24 @@ export default function App() {
     }
   }
 
+  async function checkRole() {
+    const { data, error } = await supabase
+      .from("users")
+      .select("id") // only select the ID to minimize data returned
+      .eq("email", email)
+      .limit(1); // optimization: don't scan the whole table
+
+    if (error) {
+      console.error("Error querying:", error);
+    } else if (data.length > 0) {
+      console.log("User is a landlord!");
+      return true;
+    } else {
+      console.log("User is a tenant!");
+      return false;
+    }
+  }
+
   // Signing in
   async function signIn() {
     //Testing
@@ -61,11 +79,11 @@ export default function App() {
     } else {
       // Navigating the user to their respective dashboard once they login
       // Depending if they have the button toggled or not
-      if (isLandlord) {
+      if (isLandlord && (await checkRole())) {
         router.navigate("./landlord/dashboard");
         Alert.alert("Success", "You are signed in!");
       } else {
-        Alert.alert("Error with toggle button");
+        Alert.alert("Tenant dashboard has not yet been implemented");
       }
     }
     setLoading(false);
