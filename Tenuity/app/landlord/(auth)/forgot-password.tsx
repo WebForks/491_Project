@@ -22,7 +22,7 @@ export default function ForgotPassword() {
   // Sends email password reset request to user's email
   async function handleResetPassword() {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "exp://localhost:8081/reset-password",
+      redirectTo: "myapp://(auth)/reset-password-email",
     });
 
     if (error) {
