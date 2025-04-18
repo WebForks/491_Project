@@ -16,12 +16,12 @@ import { supabase } from "../utils/supabase";
 import * as Linking from "expo-linking";
 
 export default function App() {
-  const [isLandlord, setIsLandlord] = useState(true);
-
   // Variables used for facilitating signin logic
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  // Used to determine which type of account is being signed in to
+  const [isLandlord, setIsLandlord] = useState(true);
 
   // Start/stop auto-refresh based on app state
   useEffect(() => {
@@ -35,6 +35,14 @@ export default function App() {
 
     return () => listener.remove();
   }, []);
+
+  function handleToggle() {
+    if (isLandlord) {
+      setIsLandlord(false);
+    } else {
+      setIsLandlord(true);
+    }
+  }
 
   // Signing in
   async function signIn() {
@@ -51,10 +59,14 @@ export default function App() {
     if (error) {
       Alert.alert("Login failed :(", error.message);
     } else {
-      // Keep this only for testing
-      Alert.alert("Success", "You are signed in!");
       // Navigating the user to their respective dashboard once they login
-      router.navigate("./landlord/dashboard");
+      // Depending if they have the button toggled or not
+      if (isLandlord) {
+        router.navigate("./landlord/dashboard");
+        Alert.alert("Success", "You are signed in!");
+      } else {
+        Alert.alert("Error with toggle button");
+      }
     }
     setLoading(false);
   }
@@ -113,7 +125,7 @@ export default function App() {
         {/* Landlord/Tenant Toggle */}
         <View className="flex-row justify-center">
           <TouchableOpacity
-            onPress={() => setIsLandlord(true)}
+            onPress={() => handleToggle()}
             className={`px-4 py-2 rounded-l ${
               isLandlord ? "bg-blue-500" : "bg-gray-300"
             }`}
