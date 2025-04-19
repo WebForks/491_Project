@@ -14,7 +14,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import "../../../global.css";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { supabase } from "../../../utils/supabase";
 
 export default function SignupLandlord() {
@@ -24,6 +24,8 @@ export default function SignupLandlord() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const router = useRouter();
 
   const [errors, setErrors] = useState({
     firstName: "",
@@ -38,7 +40,8 @@ export default function SignupLandlord() {
     if (!/^[a-zA-Z]{1,50}$/.test(firstName)) {
       setErrors((prev) => ({
         ...prev,
-        firstName: "First name must only contain letters and be up to 50 characters.",
+        firstName:
+          "First name must only contain letters and be up to 50 characters.",
       }));
     } else {
       setErrors((prev) => ({ ...prev, firstName: "" }));
@@ -49,7 +52,8 @@ export default function SignupLandlord() {
     if (!/^[a-zA-Z]{1,50}$/.test(lastName)) {
       setErrors((prev) => ({
         ...prev,
-        lastName: "Last name must only contain letters and be up to 50 characters.",
+        lastName:
+          "Last name must only contain letters and be up to 50 characters.",
       }));
     } else {
       setErrors((prev) => ({ ...prev, lastName: "" }));
@@ -57,10 +61,13 @@ export default function SignupLandlord() {
   };
 
   const validateEmail = () => {
-    if (!/^[^\s@]+@(gmail\.com|hotmail\.com|yahoo\.com|outlook\.com)$/.test(email)) {
+    if (
+      !/^[^\s@]+@(gmail\.com|hotmail\.com|yahoo\.com|outlook\.com)$/.test(email)
+    ) {
       setErrors((prev) => ({
         ...prev,
-        email: "Email must end with @gmail.com, @yahoo.com, @outlook.com. or @hotmail.com",
+        email:
+          "Email must end with @gmail.com, @yahoo.com, @outlook.com. or @hotmail.com",
       }));
     } else {
       setErrors((prev) => ({ ...prev, email: "" }));
@@ -79,7 +86,11 @@ export default function SignupLandlord() {
   };
 
   const validatePassword = () => {
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_])[A-Za-z\d@$!%*?&\-_]{8,}$/.test(password)) {
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_])[A-Za-z\d@$!%*?&\-_]{8,}$/.test(
+        password,
+      )
+    ) {
       setErrors((prev) => ({
         ...prev,
         password:
@@ -118,7 +129,10 @@ export default function SignupLandlord() {
       errors.password ||
       errors.confirmPassword
     ) {
-      Alert.alert("Error", "Please fix the highlighted fields before registering.");
+      Alert.alert(
+        "Error",
+        "Please fix the highlighted fields before registering.",
+      );
       return;
     }
 
@@ -163,13 +177,16 @@ export default function SignupLandlord() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
             {/* Header */}
-            <View className="items-center mb-8">
+            <TouchableOpacity
+              className="items-center mb-8"
+              onPress={() => router.navigate("../../")}
+            >
               <Image
                 source={require("../../../assets/images/logo.png")}
                 className="w-[150px] h-[150px]"
                 resizeMode="contain"
               />
-            </View>
+            </TouchableOpacity>
 
             {/* Signup Form */}
             <View className="border-2 border-[#38B6FF] rounded-lg p-4 mx-4">
@@ -186,7 +203,9 @@ export default function SignupLandlord() {
                   placeholder="Enter your first name"
                   placeholderTextColor="#888"
                 />
-                {errors.firstName ? <Text className="text-red-500">{errors.firstName}</Text> : null}
+                {errors.firstName ? (
+                  <Text className="text-red-500">{errors.firstName}</Text>
+                ) : null}
               </View>
 
               {/* Last Name */}
@@ -202,7 +221,9 @@ export default function SignupLandlord() {
                   placeholder="Enter your last name"
                   placeholderTextColor="#888"
                 />
-                {errors.lastName ? <Text className="text-red-500">{errors.lastName}</Text> : null}
+                {errors.lastName ? (
+                  <Text className="text-red-500">{errors.lastName}</Text>
+                ) : null}
               </View>
 
               {/* Email */}
@@ -219,7 +240,9 @@ export default function SignupLandlord() {
                   keyboardType="email-address"
                   placeholderTextColor="#888"
                 />
-                {errors.email ? <Text className="text-red-500">{errors.email}</Text> : null}
+                {errors.email ? (
+                  <Text className="text-red-500">{errors.email}</Text>
+                ) : null}
               </View>
 
               {/* Phone Number */}
@@ -260,7 +283,9 @@ export default function SignupLandlord() {
                   secureTextEntry
                   placeholderTextColor="#888"
                 />
-                {errors.password ? <Text className="text-red-500">{errors.password}</Text> : null}
+                {errors.password ? (
+                  <Text className="text-red-500">{errors.password}</Text>
+                ) : null}
               </View>
 
               {/* Confirm Password */}
@@ -271,7 +296,9 @@ export default function SignupLandlord() {
                   onChangeText={setConfirmPassword}
                   onBlur={validateConfirmPassword}
                   className={`border-2 ${
-                    errors.confirmPassword ? "border-red-500" : "border-[#38B6FF]"
+                    errors.confirmPassword
+                      ? "border-red-500"
+                      : "border-[#38B6FF]"
                   } rounded-lg p-2`}
                   placeholder="Confirm your password"
                   secureTextEntry
@@ -296,3 +323,4 @@ export default function SignupLandlord() {
     </SafeAreaView>
   );
 }
+

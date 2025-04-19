@@ -100,13 +100,13 @@ export default function App() {
   return (
     <View className="flex-1 bg-white items-center justify-center px-4">
       {/* Logo & Title */}
-      <View className="items-center mb-8">
+      <TouchableOpacity className="items-center mb-8">
         <Image
           source={require("../assets/images/logo.png")}
           className="w-[170px] h-[170px] mb-1"
           resizeMode="contain"
         />
-      </View>
+      </TouchableOpacity>
 
       {/* Form Container */}
       <View className="w-full max-w-sm border-2 border-blue-300 rounded-lg p-4">

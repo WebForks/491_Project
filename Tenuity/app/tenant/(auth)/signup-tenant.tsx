@@ -223,13 +223,16 @@ export default function SignupTenant() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
             {/* Header */}
-            <View className="items-center mb-8">
+            <TouchableOpacity
+              className="items-center mb-8"
+              onPress={() => router.replace("../../")}
+            >
               <Image
                 source={require("../../../assets/images/logo.png")}
                 className="w-[150px] h-[150px]"
                 resizeMode="contain"
               />
-            </View>
+            </TouchableOpacity>
 
             {/* Signup Form */}
             <View className="border-2 border-[#38B6FF] rounded-lg p-4 mx-4">
