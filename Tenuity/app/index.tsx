@@ -83,10 +83,18 @@ export default function App() {
         router.navigate("./landlord/dashboard");
         Alert.alert("Success", "You are signed in!");
       } else {
-        Alert.alert("Tenant dashboard has not yet been implemented");
+        router.navigate("/tenant/dashboard");
       }
     }
     setLoading(false);
+  }
+
+  function redirectToSignup() {
+    if (isLandlord) {
+      router.navigate("/landlord/(auth)/signup-landlord");
+    } else {
+      router.navigate("/tenant/(auth)/signup-tenant");
+    }
   }
 
   return (
@@ -134,10 +142,8 @@ export default function App() {
             <Text className="text-blue-500 text-center">Forgot password?</Text>
           </Link>
         </TouchableOpacity>
-        <TouchableOpacity className="mb-4">
-          <Link href="./landlord/(auth)/signup-landlord">
-            <Text className="text-blue-500 text-center">Create Account</Text>
-          </Link>
+        <TouchableOpacity className="mb-4" onPress={redirectToSignup}>
+          <Text className="text-blue-500 text-center">Create Account</Text>
         </TouchableOpacity>
 
         {/* Landlord/Tenant Toggle */}
