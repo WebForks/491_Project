@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { Link } from "expo-router";
+import { useRouter, Link } from "expo-router";
 import "../../../global.css";
 import { supabase } from "@/utils/supabase";
 
@@ -19,10 +19,12 @@ export default function ForgotPassword() {
   // Variable to hold the user entered email address
   const [email, setEmail] = useState("");
 
+  const router = useRouter();
+
   // Sends email password reset request to user's email
   async function handleResetPassword() {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "myapp://(auth)/reset-password-email",
+      redirectTo: "myapp://landlord/reset-password-email",
     });
 
     if (error) {
@@ -30,19 +32,23 @@ export default function ForgotPassword() {
       Alert.alert("Error:", error.message);
     } else {
       Alert.alert("Password reset email has been sent!");
+      router.replace("../../");
     }
   }
 
   return (
     <View className="flex-1 bg-white px-4 justify-center items-center">
       {/* Logo & Title */}
-      <View className="items-center mb-8">
+      <TouchableOpacity
+        className="items-center mb-8"
+        onPress={() => router.replace("../../")}
+      >
         <Image
           source={require("../../../assets/images/logo.png")}
           className="w-[170px] h-[170px] mb-2"
           resizeMode="contain"
         />
-      </View>
+      </TouchableOpacity>
 
       {/* Heading & Description */}
       <Text className="text-lg font-semibold mb-1">Forgot password?</Text>
@@ -71,14 +77,6 @@ export default function ForgotPassword() {
             <Text className="text-white font-bold">Submit</Text>
           </TouchableOpacity>
         </Link>
-
-        {/* Login & Create Account */}
-        <TouchableOpacity className="mb-2">
-          <Text className="text-blue-500 text-center">Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text className="text-blue-500 text-center">Create Account</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
