@@ -56,7 +56,7 @@ export default function App() {
 
   // Signing in
   async function signIn() {
-    //Testing
+    // Testing Deep Linking
     const prefix = Linking.createURL("/");
     console.log(prefix);
     //
