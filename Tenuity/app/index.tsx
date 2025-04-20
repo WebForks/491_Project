@@ -36,19 +36,11 @@ export default function App() {
     return () => listener.remove();
   }, []);
 
-  function handleToggle() {
-    if (isLandlord) {
-      setIsLandlord(false);
-    } else {
-      setIsLandlord(true);
-    }
-  }
-
   async function checkRole() {
     const { data, error } = await supabase
-      .from("users")
+      .from("Landlords")
       .select("id") // only select the ID to minimize data returned
-      .eq("email", email)
+      .eq("email", email.toLowerCase())
       .limit(1); // optimization: don't scan the whole table
 
     if (error) {
@@ -56,10 +48,10 @@ export default function App() {
     } else if (data.length > 0) {
       console.log("User is a landlord!");
       return true;
-    } else {
-      console.log("User is a tenant!");
-      return false;
     }
+    console.log(data);
+    console.log("User is a tenant!");
+    return false;
   }
 
   // Signing in
@@ -79,11 +71,15 @@ export default function App() {
     } else {
       // Navigating the user to their respective dashboard once they login
       // Depending if they have the button toggled or not
-      if (isLandlord && (await checkRole())) {
+      const isUserLandlord = await checkRole();
+      console.log(isUserLandlord);
+      if (isLandlord && isUserLandlord) {
         router.navigate("./landlord/dashboard");
         Alert.alert("Success", "You are signed in!");
-      } else {
+      } else if (!isLandlord && !isUserLandlord) {
         router.navigate("/tenant/dashboard");
+      } else {
+        Alert.alert("Invalid account types!");
       }
     }
     setLoading(false);
@@ -149,7 +145,7 @@ export default function App() {
         {/* Landlord/Tenant Toggle */}
         <View className="flex-row justify-center">
           <TouchableOpacity
-            onPress={() => handleToggle()}
+            onPress={() => setIsLandlord(true)}
             className={`px-4 py-2 rounded-l ${
               isLandlord ? "bg-blue-500" : "bg-gray-300"
             }`}
