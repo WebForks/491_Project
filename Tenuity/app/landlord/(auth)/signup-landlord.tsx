@@ -24,7 +24,6 @@ export default function SignupLandlord() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const router = useRouter();
 
   const [errors, setErrors] = useState({
@@ -165,6 +164,7 @@ export default function SignupLandlord() {
     } else {
       console.log("User successfully has been added to Landlords table!", data);
       Alert.alert("Successfully created account!");
+      router.navigate("../dashboard");
     }
   };
 
@@ -177,16 +177,13 @@ export default function SignupLandlord() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }}>
             {/* Header */}
-            <TouchableOpacity
-              className="items-center mb-8"
-              onPress={() => router.navigate("../../")}
-            >
+            <View className="items-center mb-8">
               <Image
                 source={require("../../../assets/images/logo.png")}
                 className="w-[150px] h-[150px]"
                 resizeMode="contain"
               />
-            </TouchableOpacity>
+            </View>
 
             {/* Signup Form */}
             <View className="border-2 border-[#38B6FF] rounded-lg p-4 mx-4">
@@ -258,7 +255,7 @@ export default function SignupLandlord() {
                   placeholder="Enter your phone number"
                   keyboardType="phone-pad"
                   maxLength={10}
-                  placeholderTextColor="#888"
+                  placeholderTextColor="#890"
                 />
                 {errors.phoneNumber ? (
                   <Text className="text-red-500">{errors.phoneNumber}</Text>
