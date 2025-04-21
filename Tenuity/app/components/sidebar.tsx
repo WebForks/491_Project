@@ -20,9 +20,10 @@ const screenWidth = Dimensions.get("window").width;
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  userType: "landlord" | "tenant"; // Accept userType as a prop
 }
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen, onClose, userType }: SidebarProps) {
   const router = useRouter();
   const sidebarAnimation = React.useRef(new Animated.Value(-screenWidth * 0.75)).current;
 
@@ -83,6 +84,46 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     });
   };
 
+  // Define menu items based on userType
+  const menuItems =
+    userType === "landlord"
+      ? [
+          { label: "Home", icon: <Entypo name="home" size={24} color="black" />, path: "./dashboard" },
+          {
+            label: "Financial Dashboard",
+            icon: <MaterialIcons name="attach-money" size={24} color="black" />,
+            path: "./financialDashboard",
+          },
+          {
+            label: "Messaging",
+            icon: <Ionicons name="chatbubble-outline" size={24} color="black" />,
+            path: "./tenantlist",
+          },
+          {
+            label: "Documents",
+            icon: <Ionicons name="document-text-outline" size={24} color="black" />,
+            path: "./documents",
+          },
+        ]
+      : [
+          { label: "Home", icon: <Entypo name="home" size={24} color="black" />, path: "./dashboard" },
+          {
+            label: "Maintenance",
+            icon: <MaterialIcons name="build" size={24} color="black" />,
+            path: "./maintenance",
+          },
+          {
+            label: "Messaging",
+            icon: <Ionicons name="chatbubble-outline" size={24} color="black" />,
+            path: "./messaging",
+          },
+          {
+            label: "Documents",
+            icon: <Ionicons name="document-text-outline" size={24} color="black" />,
+            path: "./tnDocuments",
+          },
+        ];
+
   return (
     <>
       {/* Blur Background */}
@@ -115,37 +156,16 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* Sidebar Items */}
           <View style={styles.menuItems}>
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigateTo("./dashboard")} // Navigate to Home (Dashboard)
-            >
-              <Entypo name="home" size={24} color="black" />
-              <Text style={styles.menuText}>Home</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigateTo("./financialDashboard")} // Navigate to Financial Dashboard
-            >
-              <MaterialIcons name="attach-money" size={24} color="black" />
-              <Text style={styles.menuText}>Financial Dashboard</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigateTo("./tenantlist")}
-            >
-              <Ionicons name="chatbubble-outline" size={24} color="black" />
-              <Text style={styles.menuText}>Messaging</Text>
-            </TouchableOpacity>
-
-						<TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigateTo("./documents")} // Navigate to Documents
-            >
-              <Ionicons name="document-text-outline" size={24} color="black" />
-              <Text style={styles.menuText}>Documents</Text>
-            </TouchableOpacity>
+            {menuItems.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.menuItem}
+                onPress={() => navigateTo(item.path)}
+              >
+                {item.icon}
+                <Text style={styles.menuText}>{item.label}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
       </Animated.View>

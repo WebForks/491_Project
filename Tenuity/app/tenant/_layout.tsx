@@ -23,7 +23,7 @@ export default function Layout() {
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        userType="landlord" // Pass userType as "landlord"
+        userType="tenant" // Pass userType as "tenant"
       />
 
       {/* Main Content */}
