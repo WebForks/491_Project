@@ -28,10 +28,15 @@ export default function ChangeEmail() {
   });
 
   const validateNewEmail = () => {
-    if (!/^[^\s@]+@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com)$/.test(newEmail)) {
+    if (
+      !/^[^\s@]+@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com)$/.test(
+        newEmail,
+      )
+    ) {
       setErrors((prev) => ({
         ...prev,
-        newEmail: "Email must end with @gmail.com, @yahoo.com, @outlook.com, or @hotmail.com.",
+        newEmail:
+          "Email must end with @gmail.com, @yahoo.com, @outlook.com, or @hotmail.com.",
       }));
     } else {
       setErrors((prev) => ({ ...prev, newEmail: "" }));
@@ -55,7 +60,10 @@ export default function ChangeEmail() {
     validateConfirmEmail();
 
     if (errors.newEmail || errors.confirmEmail) {
-      Alert.alert("Error", "Please fix the highlighted fields before proceeding.");
+      Alert.alert(
+        "Error",
+        "Please fix the highlighted fields before proceeding.",
+      );
       return;
     }
 
@@ -67,6 +75,28 @@ export default function ChangeEmail() {
       console.log("Error while changing email:", error);
       Alert.alert("Error while changing email!");
     } else {
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
+
+      if (userError || !userData?.user) {
+        console.error("Failed to get user:", userError);
+        Alert.alert("Error", "Could not verify current user.");
+        return;
+      }
+
+      const userId = userData.user.id;
+
+      const { error: tableUpdateError } = await supabase
+        .from("Landlords")
+        .update({ email: newEmail.toLowerCase() })
+        .eq("user_id", userId);
+
+      if (tableUpdateError) {
+        console.error("Error updating Landlords table:", tableUpdateError);
+        Alert.alert("Error", "Failed to update email in Landlords table.");
+        return;
+      }
+
       Alert.alert("Successfully changed email!");
       console.log("Successfully changed email!");
       // navigating to the dashboard -- assuming user changed email from profile screen
@@ -94,7 +124,9 @@ export default function ChangeEmail() {
 
               {/* Form Container */}
               <View className="w-full max-w-sm border-2 border-blue-300 rounded-lg p-4">
-                <Text className="text-base font-semibold mb-2">Enter New Email</Text>
+                <Text className="text-base font-semibold mb-2">
+                  Enter New Email
+                </Text>
 
                 {/* New Email Field */}
                 <TextInput
@@ -121,7 +153,9 @@ export default function ChangeEmail() {
                   } rounded p-3 mb-1`}
                 />
                 {errors.confirmEmail ? (
-                  <Text className="text-red-500 mb-3">{errors.confirmEmail}</Text>
+                  <Text className="text-red-500 mb-3">
+                    {errors.confirmEmail}
+                  </Text>
                 ) : null}
 
                 {/* Change Email Button */}
@@ -139,4 +173,3 @@ export default function ChangeEmail() {
     </SafeAreaView>
   );
 }
-
