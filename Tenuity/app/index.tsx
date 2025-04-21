@@ -93,6 +93,14 @@ export default function App() {
     }
   }
 
+  function redirectToForgotPassword() {
+    if (isLandlord) {
+      router.navigate("/landlord/(auth)/forgot-password");
+    } else {
+      router.navigate("/tenant/(auth)/forgot-password");
+    }
+  }
+
   return (
     <View className="flex-1 bg-white items-center justify-center px-4">
       {/* Logo & Title */}
@@ -133,10 +141,8 @@ export default function App() {
         </TouchableOpacity>
 
         {/* Forgot Password & Create Account */}
-        <TouchableOpacity className="mb-2">
-          <Link href="./landlord/(auth)/forgot-password">
-            <Text className="text-blue-500 text-center">Forgot password?</Text>
-          </Link>
+        <TouchableOpacity className="mb-2" onPress={redirectToForgotPassword}>
+          <Text className="text-blue-500 text-center">Forgot password?</Text>
         </TouchableOpacity>
         <TouchableOpacity className="mb-4" onPress={redirectToSignup}>
           <Text className="text-blue-500 text-center">Create Account</Text>
