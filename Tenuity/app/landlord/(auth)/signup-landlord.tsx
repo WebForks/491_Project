@@ -255,7 +255,7 @@ export default function SignupLandlord() {
                   placeholder="Enter your phone number"
                   keyboardType="phone-pad"
                   maxLength={10}
-                  placeholderTextColor="#890"
+                  placeholderTextColor="#888"
                 />
                 {errors.phoneNumber ? (
                   <Text className="text-red-500">{errors.phoneNumber}</Text>
