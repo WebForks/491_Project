@@ -24,7 +24,7 @@ export default function ProfileLandlord() {
 
   const [landlord, setLandlord] = useState<any>(null);
   const [profileImage, setProfileImage] = useState(
-    require("../../assets/images/react-logo.png")
+    require("../../assets/images/react-logo.png"),
   );
   const [isLoading, setIsLoading] = useState(true);
 
@@ -69,66 +69,71 @@ export default function ProfileLandlord() {
         console.error("Error fetching user:", userError?.message);
         return;
       }
-  
+
       console.log("Uploading file from URI:", uri);
-  
+
       // Fetch the current profile picture path from the database
       const { data: landlordData, error: landlordError } = await supabase
         .from("Landlords")
         .select("profile_pic_path")
         .eq("user_id", user.user.id)
         .single();
-  
+
       if (landlordError) {
         console.error("Error fetching landlord data:", landlordError.message);
         return;
       }
-  
+
       const oldProfilePicPath = landlordData?.profile_pic_path;
-  
+
       if (oldProfilePicPath) {
         const oldFileName = oldProfilePicPath.split("/").slice(-2).join("/"); // Extract the relative path
         console.log("Old file name to delete:", oldFileName);
-      
+
         if (oldFileName) {
           const { error: deleteError } = await supabase.storage
             .from("profile-pictures")
             .remove([oldFileName]);
-      
+
           if (deleteError) {
-            console.error("Error deleting old profile picture:", deleteError.message);
+            console.error(
+              "Error deleting old profile picture:",
+              deleteError.message,
+            );
             return;
           }
-      
+
           console.log("Old profile picture deleted successfully");
         } else {
-          console.error("Could not extract file name from old profile picture path");
+          console.error(
+            "Could not extract file name from old profile picture path",
+          );
         }
       }
-  
+
       // Read the file as Base64
       const base64 = await FileSystem.readAsStringAsync(uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-  
+
       // Convert Base64 to a Blob using the Buffer polyfill
       const blob = Buffer.from(base64, "base64");
-  
+
       // Generate a unique file name
       const fileName = `profile-pictures/${user.user.id}-${Date.now()}.jpg`;
-  
+
       // Upload the new profile picture to Supabase storage
       const { data, error: uploadError } = await supabase.storage
         .from("profile-pictures")
         .upload(fileName, blob, { upsert: true });
-  
+
       if (uploadError) {
         console.error("Error uploading profile picture:", uploadError.message);
         return;
       }
-  
+
       console.log("New profile picture uploaded successfully:", data);
-  
+
       // Get the public URL of the uploaded file
       const { data: publicUrlData } = supabase.storage
         .from("profile-pictures")
@@ -138,17 +143,20 @@ export default function ProfileLandlord() {
         console.error("Error fetching public URL");
         return;
       }
-  
+
       console.log("Public URL of uploaded file:", publicUrlData.publicUrl);
-  
+
       // Update the profile picture path in the database
       const { error: updateError } = await supabase
         .from("Landlords")
         .update({ profile_pic_path: publicUrlData.publicUrl })
         .eq("user_id", user.user.id);
-  
+
       if (updateError) {
-        console.error("Error updating profile picture in database:", updateError.message);
+        console.error(
+          "Error updating profile picture in database:",
+          updateError.message,
+        );
       } else {
         console.log("Profile picture updated successfully!");
         setProfileImage({ uri: publicUrlData.publicUrl });
@@ -168,7 +176,7 @@ export default function ProfileLandlord() {
         { text: "Choose from Gallery", onPress: pickImage },
         { text: "Take Photo", onPress: takePhoto },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -268,7 +276,10 @@ export default function ProfileLandlord() {
         <Text className="text-white font-bold text-lg">Change Password</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto">
+      <TouchableOpacity
+        className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
+        onPress={() => router.replace("/landlord/paymentPreferences")}
+      >
         <Text className="text-white font-bold text-lg">
           Payment Preferences
         </Text>
@@ -304,3 +315,4 @@ export default function ProfileLandlord() {
     </SafeAreaView>
   );
 }
+
