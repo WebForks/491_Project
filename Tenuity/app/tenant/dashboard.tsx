@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter, Link } from "expo-router";
 
 export default function TenantDashboard() {
   const userName = "Danny"; // Placeholder name
@@ -35,9 +36,11 @@ export default function TenantDashboard() {
         <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
           <Ionicons name="cash-outline" size={24} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
-          <Ionicons name="folder-outline" size={24} color="white" />
-        </TouchableOpacity>
+        <Link href="./tnDocuments" asChild>
+          <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
+            <Ionicons name="folder-outline" size={24} color="white" />
+          </TouchableOpacity>
+        </Link>
         <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
           <Ionicons name="chatbubble-outline" size={24} color="white" />
         </TouchableOpacity>

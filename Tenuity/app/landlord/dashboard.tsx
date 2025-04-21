@@ -18,6 +18,15 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { supabase } from "../../utils/supabase";
 import { useSidebar } from "./_layout";
 
+interface Maintenance {
+  id: number;
+  title: string;
+  address: string;
+  completed: boolean;
+  description?: string;
+  image_urls?: string[];
+}
+
 export default function Dashboard() {
   const { toggleSidebar } = useSidebar();
   const [properties, setProperties] = useState<
@@ -51,7 +60,7 @@ export default function Dashboard() {
         // Fetch properties where landlord_uuid matches the user's ID
         const { data: propertiesData, error: propertiesError } = await supabase
           .from("Properties")
-          .select("id, address")
+          .select("id, address, landlord_uuid")  // Fetching additional info if needed
           .eq("landlord_uuid", user.id);
 
         console.log("Properties Data:", propertiesData); // Log the fetched properties data
@@ -66,7 +75,7 @@ export default function Dashboard() {
         const { data: maintenanceData, error: maintenanceError } =
           await supabase
             .from("Maintenance")
-            .select("id, title, property_id, completed")
+            .select("id, title, description, image_url, address, completed")
             .eq("landlord_uuid", user.id)
             .eq("completed", false);
 
@@ -80,7 +89,7 @@ export default function Dashboard() {
           const maintenanceWithAddresses = maintenanceData.map(
             (maintenance) => {
               const property = propertiesData?.find(
-                (p) => p.id === maintenance.property_id
+                (p) => p.id === maintenance.address
               );
               return {
                 ...maintenance,
@@ -160,7 +169,7 @@ export default function Dashboard() {
               <Link
                 href={{
                   pathname: "../landlord/propertyDetails",
-                  params: { id: item.id, address: item.address },
+                  params: { id: item.id, address: item.address, name: item.address },
                 }}
                 asChild
               >
@@ -204,32 +213,32 @@ export default function Dashboard() {
           <Text className="text-gray-500">No maintenance issues reported.</Text>
         ) : (
           <FlatList
-            data={maintenanceRequests}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <View className="flex-row items-center gap-x-4 mb-2">
-                {/* ✅ Checkbox on the left */}
-                <Checkbox
-                  value={checkedItems[item.id] || false}
-                  onValueChange={(newValue) => {
-                    setCheckedItems((prev) => ({
-                      ...prev,
-                      [item.id]: newValue,
-                    }));
-                    if (newValue) {
-                      markAsCompleted(item.id);
-                    }
-                  }}
-                  color={checkedItems[item.id] ? "green" : undefined}
-                />
-                {/* ✅ Text directly next to checkbox */}
+          data={maintenanceRequests}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <Link
+              href={{
+                pathname: "../landlord/maintenance",
+                params: {
+                  id: item.id.toString(),
+                  title: item.title,
+                },
+              }}
+              asChild
+            >
+              <Pressable className="flex-row items-center gap-x-4 mb-3 bg-gray-100 p-3 rounded-lg">
+              <Checkbox
+                value={checkedItems[item.id] ?? false}
+                onValueChange={() => markAsCompleted(item.id)}
+              />
                 <View>
-                  <Text className="text-lg font-semibold">{item.title}</Text>
+                  <Text className="text-lg font-medium">{item.title}</Text>
                   <Text className="text-gray-600">{item.address}</Text>
                 </View>
-              </View>
-            )}
-          />
+              </Pressable>
+            </Link>
+          )}
+        />
         )}
       </View>
 

@@ -125,7 +125,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
             <TouchableOpacity
               style={styles.menuItem}
-              onPress={() => navigateTo("./financial-dashboard")} // Navigate to Financial Dashboard
+              onPress={() => navigateTo("./financialDashboard")} // Navigate to Financial Dashboard
             >
               <MaterialIcons name="attach-money" size={24} color="black" />
               <Text style={styles.menuText}>Financial Dashboard</Text>
@@ -137,15 +137,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             >
               <Ionicons name="chatbubble-outline" size={24} color="black" />
               <Text style={styles.menuText}>Messaging</Text>
-            </TouchableOpacity>
-
-
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigateTo("./maintenance")} // Navigate to Maintenance
-            >
-              <MaterialCommunityIcons name="wrench-outline" size={24} color="black" />
-              <Text style={styles.menuText}>Maintenance</Text>
             </TouchableOpacity>
 
 						<TouchableOpacity
