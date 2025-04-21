@@ -278,7 +278,7 @@ export default function ProfileLandlord() {
 
       <TouchableOpacity
         className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
-        onPress={() => router.replace("/landlord/paymentPreferences")}
+        onPress={() => router.replace("/landlord/register-payment")}
       >
         <Text className="text-white font-bold text-lg">
           Payment Preferences
@@ -315,4 +315,3 @@ export default function ProfileLandlord() {
     </SafeAreaView>
   );
 }
-
