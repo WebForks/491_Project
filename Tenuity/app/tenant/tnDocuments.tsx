@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList, Image, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Image,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -22,10 +29,9 @@ export default function TenantDocuments() {
     <View className="flex-1 bg-white p-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
-
         {/* Centered Logo */}
         <View className="flex-1 justify-center items-center">
-          <Link href="../landlord/dashboard" asChild>
+          <Link href="./dashboard" asChild>
             <Pressable>
               <Image
                 source={require("../../assets/images/logo.png")}
@@ -61,11 +67,20 @@ export default function TenantDocuments() {
               onPress={() => toggleExpand(item.id)}
             >
               <View className="flex-row items-center">
-                <Ionicons name="folder-outline" size={24} color="black" className="mr-2" />
+                <Ionicons
+                  name="folder-outline"
+                  size={24}
+                  color="black"
+                  className="mr-2"
+                />
                 <Text className="text-lg font-semibold">{item.name}</Text>
               </View>
               <Ionicons
-                name={expandedDocument === item.id ? "chevron-down" : "chevron-forward"}
+                name={
+                  expandedDocument === item.id
+                    ? "chevron-down"
+                    : "chevron-forward"
+                }
                 size={24}
                 color="black"
               />
@@ -77,10 +92,17 @@ export default function TenantDocuments() {
             {/* Dropdown Document Details */}
             {expandedDocument === item.id && (
               <View className="p-3">
-                <Text className="text-sm text-gray-700">Property: {item.property}</Text>
+                <Text className="text-sm text-gray-700">
+                  Property: {item.property}
+                </Text>
                 {/* Add functionality for document actions here */}
                 <TouchableOpacity className="flex-row items-center p-2 mt-2">
-                  <Ionicons name="eye" size={20} color="blue" className="mr-2" />
+                  <Ionicons
+                    name="eye"
+                    size={20}
+                    color="blue"
+                    className="mr-2"
+                  />
                   <Text className="text-blue-500">View Document</Text>
                 </TouchableOpacity>
               </View>
