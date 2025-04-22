@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import Entypo from "@expo/vector-icons/Entypo";
 import { useRouter, Link } from "expo-router";
 import { supabase } from "../../utils/supabase";
 import { useSidebar } from "./_layout"; // tenant's layout file
@@ -50,7 +51,7 @@ export default function TenantDashboard() {
 
         if (tenantData) {
           setUserName(`${tenantData.first_name} ${tenantData.last_name}`);
-          
+
           //console.log(tenantData);
           //console.log(user.id);
 
@@ -76,23 +77,20 @@ export default function TenantDashboard() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView>
-        {/* Header */}
-        <View className="flex-row items-center justify-between p-4 relative">
+      <ScrollView className="p-4">
+        {/* Top Bar */}
+        <View className="flex-row justify-between items-center mb-4">
           <TouchableOpacity onPress={toggleSidebar}>
-            <Ionicons name="menu" size={24} color="#000" />
+            <Entypo name="menu" size={35} color="black" />
           </TouchableOpacity>
 
-          {/* Centered Logo */}
-          <View className="flex-1 justify-center items-center">
-            <Image
-              source={require("../../assets/images/logo.png")}
-              className="w-[50px] h-[50px]"
-              resizeMode="contain"
-            />
-          </View>
+          {/* Logo */}
+          <Image
+            source={require("../../assets/images/logo.png")}
+            className="w-[100px] h-[100px]"
+            resizeMode="contain"
+          />
 
-          {/* Profile Icon */}
           <Link href="./profile-tenant" asChild>
             <TouchableOpacity>
               <AntDesign name="user" size={35} color="black" />
@@ -101,7 +99,7 @@ export default function TenantDashboard() {
         </View>
 
         {/* Greeting */}
-        <View className="p-4">
+        <View className="mb-4">
           <View className="bg-[#4A9DFF] rounded-lg p-4">
             <Text className="text-white text-2xl font-bold">
               Hello {userName}!
@@ -110,7 +108,7 @@ export default function TenantDashboard() {
         </View>
 
         {/* Action Buttons */}
-        <View className="flex-row justify-around px-4 py-2">
+        <View className="flex-row justify-around px-4 py-2 mb-4">
           <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
             <Ionicons name="cash-outline" size={24} color="white" />
           </TouchableOpacity>
@@ -125,29 +123,35 @@ export default function TenantDashboard() {
         </View>
 
         {/* Maintenance Section */}
-        <View className="p-4">
-          <View className="bg-white rounded-lg p-4 border border-gray-200">
-            <Text className="text-lg font-semibold mb-4">Maintenance</Text>
+        <View className="border-2 border-blue-300 rounded-lg p-4 mb-4">
+          <Text className="font-semibold text-xl mb-2">Maintenance</Text>
 
-            {/* Maintenance Items */}
-            {maintenanceRequests.length > 0 ? (
-              maintenanceRequests.map((request, index) => (
-                <View key={index} className="flex-row items-center mb-3">
-                  <Text className="text-base">{request.title}</Text>
-                </View>
-              ))
-            ) : (
-              <Text className="text-gray-500 italic">
-                No pending maintenance requests
+          {/* Maintenance Items */}
+          {maintenanceRequests.length > 0 ? (
+            maintenanceRequests.map((request, index) => (
+              <View
+                key={index}
+                className="flex-row items-center gap-x-4 mb-3 bg-gray-100 p-3 rounded-lg"
+              >
+                <Text className="text-lg font-medium">{request.title}</Text>
+              </View>
+            ))
+          ) : (
+            <Text className="text-gray-500">
+              No pending maintenance requests
+            </Text>
+          )}
+
+          {/* New Request Button */}
+          <TouchableOpacity className="flex-row items-center space-x-2 mt-3">
+            <Ionicons name="add-outline" size={24} color="#3ab7ff" />
+            <View>
+              <Text className="font-semibold text-lg">New</Text>
+              <Text className="text-gray-500 text-base">
+                Add maintenance request
               </Text>
-            )}
-
-            {/* New Request Button */}
-            <TouchableOpacity className="flex-row items-center mt-3">
-              <Ionicons name="add-circle-outline" size={20} color="#4A9DFF" />
-              <Text className="text-[#4A9DFF] ml-2">New Request</Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
