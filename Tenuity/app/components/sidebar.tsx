@@ -80,7 +80,7 @@ export default function Sidebar({ isOpen, onClose, userType }: SidebarProps) {
 
   const navigateTo = (path: string) => {
     closeSidebar(() => {
-      router.push(path); // Navigate to the specified page after the sidebar closes
+      router.push(path as any); // 🛠️ cast to any to bypass the strict type check
     });
   };
 
@@ -115,7 +115,7 @@ export default function Sidebar({ isOpen, onClose, userType }: SidebarProps) {
           {
             label: "Messaging",
             icon: <Ionicons name="chatbubble-outline" size={24} color="black" />,
-            path: "./messaging",
+            path: "./tenantChat",
           },
           {
             label: "Documents",

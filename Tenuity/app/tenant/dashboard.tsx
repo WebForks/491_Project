@@ -117,9 +117,11 @@ export default function TenantDashboard() {
               <Ionicons name="folder-outline" size={24} color="white" />
             </TouchableOpacity>
           </Link>
-          <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
-            <Ionicons name="chatbubble-outline" size={24} color="white" />
-          </TouchableOpacity>
+          <Link href="./tenantChat" asChild>
+            <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
+              <Ionicons name="chatbubble-outline" size={24} color="white" />
+            </TouchableOpacity>
+          </Link>
         </View>
 
         {/* Maintenance Section */}
