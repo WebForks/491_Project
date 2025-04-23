@@ -277,13 +277,6 @@ export default function ProfileTenant() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
-        onPress={() => router.replace("./rent-payment")}
-      >
-        <Text className="text-white font-bold text-lg">Pay Rent</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
         onPress={async () => {
           try {
             // Log the user out
