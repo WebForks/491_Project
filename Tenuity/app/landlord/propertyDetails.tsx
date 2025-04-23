@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import { Entypo, AntDesign } from "@expo/vector-icons";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import Sidebar from "../components/sidebar"; // Adjust path if needed
 import { supabase } from "../../utils/supabase";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // Import MaterialIcons for check/uncheck icons
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const PropertyDetails = () => {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [property, setProperty] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -35,18 +37,20 @@ const PropertyDetails = () => {
   }, [id]);
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <SafeAreaView className="flex-1 bg-white p-4">
       {/* ✅ Top Navigation Bar */}
       <View className="flex-row justify-between items-center mb-4 relative">
         <TouchableOpacity onPress={() => setSidebarOpen(true)}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
 
-        <Image
-          source={require("../../assets/images/logo.png")}
-          className="w-[100px] h-[100px]"
-          resizeMode="contain"
-        />
+        <TouchableOpacity onPress={() => router.replace("/landlord/dashboard")}>
+          <Image
+            source={require("../../assets/images/logo.png")}
+            className="w-[100px] h-[100px]"
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
 
         <Link href="./profile-landlord" asChild>
           <TouchableOpacity>
@@ -114,7 +118,7 @@ const PropertyDetails = () => {
           <Text className="text-red-500">Property not found.</Text>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
