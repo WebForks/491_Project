@@ -17,6 +17,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { supabase } from "../../utils/supabase";
 import { useSidebar } from "./_layout";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Maintenance {
   id: number;
@@ -132,7 +133,7 @@ export default function Dashboard() {
   };
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Top Bar */}
       <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity onPress={toggleSidebar}>
@@ -261,6 +262,6 @@ export default function Dashboard() {
           </TouchableOpacity>
         </Link>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
