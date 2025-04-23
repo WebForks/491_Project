@@ -1,5 +1,5 @@
 import { supabase } from "@/utils/supabase";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -21,6 +21,8 @@ export default function ChangeEmail() {
   const [newEmail, setNewEmail] = useState("");
   // Email confirmation
   const [confirmEmail, setConfirmEmail] = useState("");
+
+  const router = useRouter();
 
   const [errors, setErrors] = useState({
     newEmail: "",
@@ -114,13 +116,16 @@ export default function ChangeEmail() {
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View className="flex-1 justify-center items-center px-4">
               {/* Logo & Title */}
-              <View className="items-center mb-8">
+              <TouchableOpacity
+                className="items-center mb-8"
+                onPress={() => router.navigate("/landlord/dashboard")}
+              >
                 <Image
                   source={require("../../../assets/images/logo.png")}
                   className="w-[100px] h-[100px] mb-2"
                   resizeMode="contain"
                 />
-              </View>
+              </TouchableOpacity>
 
               {/* Form Container */}
               <View className="w-full max-w-sm border-2 border-blue-300 rounded-lg p-4">
