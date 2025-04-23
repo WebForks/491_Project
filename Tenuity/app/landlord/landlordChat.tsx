@@ -41,7 +41,6 @@ export default function ChatScreen() {
   useEffect(() => {
     if (userId && chatId) {
       fetchMessages();
-
       const channel = supabase
         .channel("realtime-landlord-chat")
         .on("postgres_changes", { event: "*", schema: "public", table: "Messages" }, fetchMessages)
@@ -80,7 +79,7 @@ export default function ChatScreen() {
     const { data, error } = await supabase
       .from("Messages")
       .select("*")
-      .or(`author_id.eq.${userId},recipient_id.eq.${userId}`)
+      .or(`and(author_id.eq.${userId},recipient_id.eq.${chatId}),and(author_id.eq.${chatId},recipient_id.eq.${userId})`)
       .order("created_at", { ascending: true });
     if (!error && data) setMessages(data);
   };
@@ -130,29 +129,29 @@ export default function ChatScreen() {
     return (
       <View style={{
         alignSelf: isOwn ? "flex-end" : "flex-start",
-        backgroundColor: isOwn ? "#5C4DFF" : "#ECECEC",
-        borderRadius: 18,
+        backgroundColor: isOwn ? "#4A9DFF" : "#EDEDED",
+        borderRadius: 16,
         padding: 10,
-        marginVertical: 5,
+        marginVertical: 4,
         maxWidth: "75%",
         shadowColor: "#000",
         shadowOpacity: 0.05,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 1 },
+        shadowRadius: 2,
       }}>
         {item.image_url && (
           <Image
             source={{ uri: item.image_url }}
-            style={{ width: 200, height: 200, borderRadius: 10, marginBottom: 6 }}
+            style={{ width: 180, height: 180, borderRadius: 12, marginBottom: 6 }}
             resizeMode="cover"
           />
         )}
         {!!item.content && (
-          <Text style={{ color: isOwn ? "white" : "black", fontSize: 16 }}>{item.content}</Text>
+          <Text style={{ color: isOwn ? "white" : "black", fontSize: 15 }}>{item.content}</Text>
         )}
         <Text style={{
           fontSize: 10,
-          color: isOwn ? "#dfe6ff" : "#888",
+          color: isOwn ? "#d0e1ff" : "#888",
           alignSelf: "flex-end",
           marginTop: 4
         }}>
@@ -163,43 +162,38 @@ export default function ChatScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#f0f6ff" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f3f7fd" }}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={{ flex: 1 }}>
-            {/* Copied TenantList-style Header */}
+            {/* Header */}
             <View style={{
               backgroundColor: '#fff',
               paddingTop: 50,
-              paddingBottom: 10,
+              paddingBottom: 8,
               borderBottomWidth: 0.5,
               borderBottomColor: '#ddd',
               shadowColor: '#000',
-              shadowOpacity: 0.05,
+              shadowOpacity: 0.04,
               shadowOffset: { width: 0, height: 2 },
               shadowRadius: 5,
             }}>
-              <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingHorizontal: 20,
-              }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20 }}>
                 <TouchableOpacity onPress={toggleSidebar}>
-                  <Entypo name="menu" size={30} color="black" />
+                  <Entypo name="menu" size={28} color="black" />
                 </TouchableOpacity>
                 <Link href="/landlord/dashboard" asChild>
                   <TouchableOpacity>
                     <Image
                       source={require('../../assets/images/logo.png')}
-                      style={{ width: 120, height: 80 }}
+                      style={{ width: 110, height: 60 }}
                       resizeMode="contain"
                     />
                   </TouchableOpacity>
                 </Link>
                 <Link href="/landlord/profile-landlord" asChild>
                   <TouchableOpacity>
-                    <AntDesign name="user" size={28} color="black" />
+                    <AntDesign name="user" size={26} color="black" />
                   </TouchableOpacity>
                 </Link>
               </View>
@@ -210,35 +204,38 @@ export default function ChatScreen() {
                   </TouchableOpacity>
                   <Image
                     source={{ uri: tenant.profile_pic_path || "https://i.pravatar.cc/150?u=default" }}
-                    style={{ width: 40, height: 40, borderRadius: 9999, marginRight: 10 }}
+                    style={{ width: 38, height: 38, borderRadius: 9999, marginRight: 10 }}
                     resizeMode="cover"
                   />
-                  <Text style={{ fontSize: 18, fontWeight: "bold" }}>{tenant.first_name} {tenant.last_name}</Text>
+                  <Text style={{ fontSize: 17, fontWeight: "bold" }}>{tenant.first_name} {tenant.last_name}</Text>
                 </View>
               )}
             </View>
 
+            {/* Messages */}
             <FlatList
               ref={flatListRef}
               data={messages}
               keyExtractor={(item) => item.id.toString()}
               renderItem={renderItem}
-              contentContainerStyle={{ padding: 12, paddingBottom: 100 }}
+              contentContainerStyle={{ padding: 12, paddingBottom: 120 }}
               onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
               onLayout={() => setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 300)}
             />
 
+            {/* Preview Image */}
             {imageUri && (
               <View style={{ padding: 10, backgroundColor: "#fff", alignItems: "center", borderTopWidth: 1, borderColor: "#eee" }}>
                 <Image source={{ uri: imageUri }} style={{ width: 120, height: 120, borderRadius: 12, marginBottom: 6 }} resizeMode="cover" />
-                <Text style={{ color: "#555" }}>Preview</Text>
+                <Text style={{ color: "#555" }}>Image Preview</Text>
               </View>
             )}
 
+            {/* Input */}
             <View style={{
               flexDirection: "row",
               alignItems: "center",
-              padding: 12,
+              padding: 10,
               backgroundColor: "white",
               borderTopWidth: 1,
               borderColor: "#ddd",
@@ -265,12 +262,12 @@ export default function ChatScreen() {
                   borderColor: "#ccc",
                   borderRadius: 20,
                   paddingHorizontal: 15,
-                  paddingVertical: 10,
-                  fontSize: 16,
+                  paddingVertical: 8,
+                  fontSize: 15,
                   backgroundColor: "#fff",
                   marginRight: 10,
                 }}
-                placeholder="Type a message..."
+                placeholder="Type your message..."
                 placeholderTextColor="#999"
                 value={message}
                 onChangeText={setMessage}
@@ -279,7 +276,7 @@ export default function ChatScreen() {
               />
 
               <TouchableOpacity onPress={sendMessage}>
-                <Ionicons name="send" size={28} color="#5C4DFF" />
+                <Ionicons name="send" size={28} color="#4A9DFF" />
               </TouchableOpacity>
             </View>
           </View>
