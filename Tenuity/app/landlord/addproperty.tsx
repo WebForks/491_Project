@@ -1,14 +1,20 @@
 import React, { useState } from "react";
-import { View, Alert, Text, TextInput, TouchableOpacity, Image, ScrollView } from "react-native";
+import {
+  View,
+  Alert,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
 import { Link } from "expo-router";
 import "../../global.css";
 import * as ImagePicker from "expo-image-picker";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { supabase } from "../../utils/supabase"; 
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { supabase } from "../../utils/supabase";
 import { useSidebar } from "./_layout";
-import * as FileSystem from "expo-file-system";
 
 export default function AddProperty() {
   const [address, setAddress] = useState("");
@@ -22,7 +28,6 @@ export default function AddProperty() {
   const [tenantRent, setTenantRent] = useState("");
   const { toggleSidebar } = useSidebar();
 
-  // Function to pick an image from the gallery
   const pickImage = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -40,7 +45,6 @@ export default function AddProperty() {
     }
   };
 
-  // Function to handle adding the property
   const handleAddProperty = async () => {
     if (!address || !bedroomCount || !bathroomCount || !description || !tenantRent) {
       Alert.alert("Please fill in all the required fields.");
@@ -50,7 +54,10 @@ export default function AddProperty() {
     try {
       setIsLoading(true);
 
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
       if (userError) throw userError;
 
       const landlord_uuid = user?.id;
@@ -66,7 +73,7 @@ export default function AddProperty() {
         const fileName = `Properties/${Date.now()}-${address}.${fileExt}`;
         const contentType = `image/${fileExt === "jpg" ? "jpeg" : fileExt}`;
 
-        // Convert URI to blob and upload the image
+        // Convert image URI to Blob and upload
         const response = await fetch(image);
         const blob = await response.blob();
 
@@ -94,7 +101,6 @@ export default function AddProperty() {
         }
       }
 
-      // Insert the property into the database
       const { error } = await supabase.from("Properties").insert([
         {
           landlord_uuid,
@@ -113,7 +119,6 @@ export default function AddProperty() {
 
       Alert.alert("Property successfully added!");
 
-      // Reset form after successful submission
       setAddress("");
       setBedroomCount("");
       setBathroomCount("");
@@ -122,7 +127,6 @@ export default function AddProperty() {
       setTenantEmail("");
       setImage(null);
       setTenantRent("");
-      
     } catch (error: any) {
       Alert.alert("Error", error.message);
     } finally {
@@ -136,8 +140,8 @@ export default function AddProperty() {
         <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
-        
-        <Link href="./dashboard" asChild>
+
+        <Link href="../landlord/dashboard" asChild>
           <TouchableOpacity>
             <Image
               source={require("../../assets/images/logo.png")}
@@ -147,7 +151,7 @@ export default function AddProperty() {
           </TouchableOpacity>
         </Link>
 
-        <Link href="./profile-landlord" asChild>
+        <Link href="../landlord/profile-landlord" asChild>
           <TouchableOpacity>
             <AntDesign name="user" size={35} color="black" />
           </TouchableOpacity>
@@ -225,7 +229,9 @@ export default function AddProperty() {
       />
 
       <TouchableOpacity
-        className={`bg-blue-500 p-4 rounded-lg flex items-center mb-8 ${isLoading ? "opacity-50" : ""}`}
+        className={`bg-blue-500 p-4 rounded-lg flex items-center mb-8 ${
+          isLoading ? "opacity-50" : ""
+        }`}
         onPress={handleAddProperty}
         disabled={isLoading}
       >

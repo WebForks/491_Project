@@ -6,14 +6,14 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  Pressable
+  Pressable,
 } from "react-native";
 import { useLocalSearchParams, Link } from "expo-router";
 import { supabase } from "../../utils/supabase";
 import { useSidebar } from "./_layout";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // Import MaterialIcons for check/uncheck icons
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface Maintenance {
   id: number;
@@ -21,7 +21,7 @@ interface Maintenance {
   description?: string;
   address: string;
   completed: boolean;
-  image_url?: string[]; // Assuming your Supabase data stores multiple image URLs
+  image_url?: string[];
 }
 
 export default function MaintenanceDetails() {
@@ -29,7 +29,7 @@ export default function MaintenanceDetails() {
   const { toggleSidebar } = useSidebar();
   const [maintenance, setMaintenance] = useState<Maintenance | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isChecked, setIsChecked] = useState(maintenance?.completed || false);
+  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
     const fetchMaintenance = async () => {
@@ -43,7 +43,7 @@ export default function MaintenanceDetails() {
         console.error("Error fetching maintenance:", error.message);
       } else {
         setMaintenance(data);
-        setIsChecked(data.completed); // Update the checkbox state
+        setIsChecked(data.completed);
       }
 
       setLoading(false);
@@ -52,52 +52,51 @@ export default function MaintenanceDetails() {
     if (id) fetchMaintenance();
   }, [id]);
 
-  // Function to fetch image URL from Supabase Storage
   const getImageUrl = (imagePath: string) => {
     const { data } = supabase.storage
-      .from("maintenance-pictures") // Replace with your bucket name
+      .from("maintenance-pictures")
       .getPublicUrl(imagePath);
 
     return data.publicUrl || "";
   };
 
-  // Function to mark the maintenance as completed when checkbox is checked
   const handleCheckBoxChange = async () => {
     if (maintenance) {
       const { error } = await supabase
         .from("Maintenance")
-        .update({ completed: !isChecked }) // Toggle completion status
+        .update({ completed: !isChecked })
         .eq("id", maintenance.id);
 
       if (error) {
         console.error("Error updating maintenance:", error.message);
       } else {
-        // Refresh the data after updating
-        setMaintenance((prev) => (prev ? { ...prev, completed: !prev.completed } : null));
-        setIsChecked(!isChecked); // Toggle the checkbox state
+        setMaintenance((prev) =>
+          prev ? { ...prev, completed: !prev.completed } : null
+        );
+        setIsChecked(!isChecked);
       }
     }
   };
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <View className="flex-1 bg-white px-4 pt-10 pb-5">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-6">
         <TouchableOpacity onPress={toggleSidebar}>
-          <Entypo name="menu" size={35} color="black" />
+          <Entypo name="menu" size={30} color="black" />
         </TouchableOpacity>
         <Link href="../landlord/dashboard" asChild>
           <Pressable>
             <Image
               source={require("../../assets/images/logo.png")}
-              className="w-[120px] h-[120px]"
+              className="w-[110px] h-[110px]"
               resizeMode="contain"
             />
           </Pressable>
         </Link>
-        <Link href="./profile-landlord" asChild>
+        <Link href="../landlord/profile-landlord" asChild>
           <TouchableOpacity>
-            <AntDesign name="user" size={35} color="black" />
+            <AntDesign name="user" size={30} color="black" />
           </TouchableOpacity>
         </Link>
       </View>
@@ -105,50 +104,67 @@ export default function MaintenanceDetails() {
       {loading ? (
         <ActivityIndicator size="large" color="#3ab7ff" />
       ) : maintenance ? (
-        <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 30 }}
+        >
           {/* Title */}
-          <Text className="text-3xl font-semibold mb-4 text-gray-900">{maintenance.title}</Text>
-          
-          {/* Address */}
-          <View className="mb-3">
-            <Text className="text-lg text-gray-700">Address</Text>
-            <Text className="text-base text-gray-600">{maintenance.address}</Text>
-          </View>
-          
-          {/* Status */}
-          <View className="mb-3">
-            <Text className="text-lg text-gray-700">Status</Text>
-            <Text className={`text-base ${maintenance.completed ? 'text-green-500' : 'text-red-500'}`}>
-              {maintenance.completed ? "Completed" : "Pending"}
-            </Text>
-          </View>
-          
-          {/* Description */}
-          <View className="mb-5">
-            <Text className="text-lg text-gray-700">Description</Text>
-            <Text className="text-base text-gray-600">
-              {maintenance.description || "No description provided."}
-            </Text>
+          <Text className="text-3xl font-bold text-gray-900 mb-3">
+            {maintenance.title}
+          </Text>
+
+          {/* Info Card */}
+          <View className="bg-gray-50 rounded-2xl p-4 shadow-sm mb-6">
+            <View className="mb-4">
+              <Text className="text-sm text-gray-500 mb-1">Address</Text>
+              <Text className="text-base text-gray-800">
+                {maintenance.address}
+              </Text>
+            </View>
+
+            <View className="mb-4">
+              <Text className="text-sm text-gray-500 mb-1">Status</Text>
+              <Text
+                className={`text-base font-medium ${
+                  isChecked ? "text-green-600" : "text-orange-500"
+                }`}
+              >
+                {isChecked ? "Completed" : "Pending"}
+              </Text>
+            </View>
+
+            <View>
+              <Text className="text-sm text-gray-500 mb-1">Description</Text>
+              <Text className="text-base text-gray-700">
+                {maintenance.description || "No description provided."}
+              </Text>
+            </View>
           </View>
 
           {/* Images Section */}
-          <View>
-            <Text className="text-lg font-semibold text-gray-700 mb-3">Images</Text>
-            {maintenance.image_url && maintenance.image_url.length > 0 ? (
+          <View className="mb-6">
+            <Text className="text-lg font-semibold text-gray-800 mb-3">
+              Images
+            </Text>
+            {maintenance.image_url?.length ? (
               maintenance.image_url.map((imagePath, index) => {
-                const imageUrl = getImageUrl(imagePath); // Fetch image URL
-
+                const imageUrl = getImageUrl(imagePath);
                 return (
                   <Image
                     key={index}
                     source={{ uri: imageUrl }}
-                    style={{ width: "100%", height: 250, marginBottom: 15, borderRadius: 10 }}
+                    style={{
+                      width: "100%",
+                      height: 220,
+                      borderRadius: 16,
+                      marginBottom: 15,
+                    }}
                     resizeMode="cover"
                   />
                 );
               })
             ) : (
-              <Text className="text-base text-gray-600">No images available for this maintenance.</Text>
+              <Text className="text-gray-600">No images uploaded.</Text>
             )}
           </View>
         </ScrollView>
@@ -156,25 +172,28 @@ export default function MaintenanceDetails() {
         <Text className="text-red-500 text-center">Maintenance not found.</Text>
       )}
 
-      {/* Buttons Row */}
-      <View className="flex-row justify-between mt-">
-        {/* Custom Checkbox for Marking as Done */}
+      {/* Action Buttons */}
+      <View className="flex-row justify-between mt-3">
         <TouchableOpacity
           onPress={handleCheckBoxChange}
-          className="w-[48%] flex-row items-center justify-center bg-gray-100 p-4 rounded-lg"
+          className="w-[48%] flex-row items-center justify-center bg-gray-100 p-4 rounded-2xl"
         >
           <MaterialIcons
             name={isChecked ? "check-box" : "check-box-outline-blank"}
-            size={30}
+            size={28}
             color={isChecked ? "green" : "gray"}
           />
-          <Text className="ml-3 text-lg text-gray-700">Mark as Done</Text>
+          <Text className="ml-3 text-base font-medium text-gray-700">
+            Mark as Done
+          </Text>
         </TouchableOpacity>
 
-        {/* Message Icon */}
-        <Link href="./tenantlist" asChild>
-          <TouchableOpacity className="bg-blue-500 p-4 rounded-lg w-[48%] flex-row items-center justify-center">
-            <MaterialIcons name="message" size={30} color="white" />
+        <Link href="../landlord/tenantlist" asChild>
+          <TouchableOpacity className="w-[48%] bg-blue-600 p-4 rounded-2xl flex-row items-center justify-center">
+            <MaterialIcons name="message" size={28} color="white" />
+            <Text className="ml-2 text-white font-medium text-base">
+              Message
+            </Text>
           </TouchableOpacity>
         </Link>
       </View>
