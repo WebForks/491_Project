@@ -229,7 +229,6 @@ export default function ProfileTenant() {
           />
         </TouchableOpacity>
 
-				
         <TouchableOpacity>
           <AntDesign name="user" size={35} color="black" />
         </TouchableOpacity>
@@ -279,7 +278,7 @@ export default function ProfileTenant() {
 
       <TouchableOpacity
         className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
-        // onPress={() => router.replace("/tenant/register-payment")} FOR LATER USE
+        onPress={() => router.replace("/tenant/register-payment")}
       >
         <Text className="text-white font-bold text-lg">
           Payment Preferences
@@ -316,3 +315,4 @@ export default function ProfileTenant() {
     </SafeAreaView>
   );
 }
+
