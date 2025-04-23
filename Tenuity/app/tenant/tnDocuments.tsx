@@ -1,115 +1,87 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   FlatList,
-  Image,
-  Pressable,
+  Linking,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter, Link } from "expo-router";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { supabase } from "../../utils/supabase";
 
-const initialDocuments = [
-  { id: 1, name: "Lease Agreement", property: "Property A" },
-  { id: 2, name: "Rent Payment Receipt", property: "Property B" },
-];
+interface Document {
+  name: string;
+  url: string;
+}
 
 export default function TenantDocuments() {
-  const [expandedDocument, setExpandedDocument] = useState<number | null>(null);
-  const [documents, setDocuments] = useState(initialDocuments);
-  const router = useRouter();
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const toggleExpand = (documentId: number) => {
-    setExpandedDocument(expandedDocument === documentId ? null : documentId);
+  const fetchDocuments = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.storage
+        .from("Documents") // your bucket name
+        .list("", {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: "name", order: "asc" },
+        });
+
+      if (error) throw error;
+
+      const docsWithUrls = await Promise.all(
+        data
+          .filter((item) => item.name && !item.name.endsWith("/")) // folders end with "/"
+          .map(async (item) => {
+            const { data: signedUrlData } = await supabase.storage
+              .from("Documents")
+              .createSignedUrl(item.name, 60 * 60); // 1 hour
+
+            return {
+              name: item.name,
+              url: signedUrlData?.signedUrl || "",
+            };
+          })
+      );
+
+      setDocuments(docsWithUrls);
+    } catch (error: any) {
+      console.error("Error fetching documents:", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
 
   return (
     <View className="flex-1 bg-white p-4">
-      {/* Header */}
-      <View className="flex-row justify-between items-center mb-4">
-        {/* Centered Logo */}
-        <View className="flex-1 justify-center items-center">
-          <Link href="./dashboard" asChild>
-            <Pressable>
-              <Image
-                source={require("../../assets/images/logo.png")}
-                className="w-[100px] h-[100px]"
-                resizeMode="contain"
-              />
-            </Pressable>
-          </Link>
-        </View>
-
-        {/* Profile Icon Positioned to the Top-Right */}
-        <View className="absolute top-4 right-4">
-          <Link href="./profile-tenant" asChild>
-            <TouchableOpacity>
-              <AntDesign name="user" size={35} color="black" />
-            </TouchableOpacity>
-          </Link>
-        </View>
-      </View>
-
-      {/* Title */}
       <Text className="text-3xl font-bold text-center mb-4">Documents</Text>
 
-      {/* List of Documents */}
-      <FlatList
-        data={documents}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View className="mb-2">
-            {/* Document Row */}
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <FlatList
+          data={documents}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => (
             <TouchableOpacity
-              className="flex-row items-center justify-between p-3"
-              onPress={() => toggleExpand(item.id)}
+              onPress={() => Linking.openURL(item.url)}
+              className="bg-blue-500 rounded-xl p-4 flex-row items-center mb-3"
             >
-              <View className="flex-row items-center">
-                <Ionicons
-                  name="folder-outline"
-                  size={24}
-                  color="black"
-                  className="mr-2"
-                />
-                <Text className="text-lg font-semibold">{item.name}</Text>
-              </View>
-              <Ionicons
-                name={
-                  expandedDocument === item.id
-                    ? "chevron-down"
-                    : "chevron-forward"
-                }
-                size={24}
-                color="black"
-              />
+              <Ionicons name="eye" size={24} color="white" className="mr-4" />
+              <Text className="text-white text-lg font-semibold">
+                {item.name}
+              </Text>
             </TouchableOpacity>
-
-            {/* Blue Line Separator */}
-            <View className="h-[1px] bg-blue-500 w-full" />
-
-            {/* Dropdown Document Details */}
-            {expandedDocument === item.id && (
-              <View className="p-3">
-                <Text className="text-sm text-gray-700">
-                  Property: {item.property}
-                </Text>
-                {/* Add functionality for document actions here */}
-                <TouchableOpacity className="flex-row items-center p-2 mt-2">
-                  <Ionicons
-                    name="eye"
-                    size={20}
-                    color="blue"
-                    className="mr-2"
-                  />
-                  <Text className="text-blue-500">View Document</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        )}
-      />
+          )}
+        />
+      )}
     </View>
   );
 }
