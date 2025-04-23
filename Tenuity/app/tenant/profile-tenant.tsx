@@ -278,11 +278,9 @@ export default function ProfileTenant() {
 
       <TouchableOpacity
         className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
-        onPress={() => router.replace("/tenant/register-payment")}
+        onPress={() => router.replace("./rent-payment")}
       >
-        <Text className="text-white font-bold text-lg">
-          Payment Preferences
-        </Text>
+        <Text className="text-white font-bold text-lg">Pay Rent</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -315,4 +313,3 @@ export default function ProfileTenant() {
     </SafeAreaView>
   );
 }
-
