@@ -46,11 +46,8 @@ export default function App() {
     if (error) {
       console.error("Error querying:", error);
     } else if (data.length > 0) {
-      console.log("User is a landlord!");
       return true;
     }
-    console.log(data);
-    console.log("User is a tenant!");
     return false;
   }
 
@@ -58,7 +55,6 @@ export default function App() {
   async function signIn() {
     // Testing Deep Linking
     const prefix = Linking.createURL("/");
-    console.log(prefix);
     //
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
@@ -72,7 +68,6 @@ export default function App() {
       // Navigating the user to their respective dashboard once they login
       // Depending if they have the button toggled or not
       const isUserLandlord = await checkRole();
-      console.log(isUserLandlord);
       if (isLandlord && isUserLandlord) {
         router.navigate("./landlord/dashboard");
         Alert.alert("Success", "You are signed in!");

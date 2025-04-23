@@ -54,12 +54,6 @@ export default function PayRent() {
       .eq("user_id", landlordUserId)
       .single();
 
-    console.log(data);
-
-    console.log(error);
-
-    console.log("Landlord Stripe Account ID:", data.stripe_account_id);
-
     if (error || !data?.stripe_account_id) {
       Alert.alert("Error", "Could not find landlord’s Stripe account.");
       setLoading(false);
