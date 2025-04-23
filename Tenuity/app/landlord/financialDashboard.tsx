@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Pressable, Image } from "react-native";
-import { useSidebar } from "./_layout"; // Assuming sidebar logic is in _layout
+import { useSidebar } from "./_layout";
 import Entypo from "@expo/vector-icons/Entypo";
+<<<<<<< HEAD
 import { useLocalSearchParams, Link } from "expo-router";
 import { useNavigation } from "@react-navigation/native"; // To navigate to the dashboard
+=======
+import { Link, useRouter } from "expo-router";
+import { useNavigation } from '@react-navigation/native';
+>>>>>>> 33d18ee7e7ce896849a024e77104947f57bb8efe
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"; // Import MaterialIcons for check/uncheck icons
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,7 +18,7 @@ type TimeframeType = "month" | "lastMonth" | "ytd";
 
 const FinancialDashboard = () => {
   const { toggleSidebar } = useSidebar();
-  const navigation = useNavigation(); // Initialize the navigation hook
+  const navigation = useNavigation();
 
   const [timeframe, setTimeframe] = useState<TimeframeType>("month");
   const [view, setView] = useState<ViewType>("income");
@@ -39,7 +44,11 @@ const FinancialDashboard = () => {
   const value = dataMap[view][timeframe];
 
   return (
+<<<<<<< HEAD
     <SafeAreaView className="flex-1 bg-white p-4">
+=======
+    <View className="flex-1 bg-white p-6">
+>>>>>>> 33d18ee7e7ce896849a024e77104947f57bb8efe
       {/* Top Bar */}
       <View className="flex-row justify-between items-center mb-6">
         <TouchableOpacity onPress={toggleSidebar}>
@@ -62,7 +71,7 @@ const FinancialDashboard = () => {
       </View>
 
       {/* Timeframe Toggle */}
-      <View className="flex-row justify-around mb-4">
+      <View className="flex-row justify-between mb-6">
         {[
           { label: "This Month", value: "month" },
           { label: "Last Month", value: "lastMonth" },
@@ -71,10 +80,18 @@ const FinancialDashboard = () => {
           <TouchableOpacity
             key={tf}
             onPress={() => setTimeframe(tf as TimeframeType)}
+<<<<<<< HEAD
           >
             <Text
               className={`text-lg font-semibold ${timeframe === tf ? "text-blue-600" : "text-gray-500"}`}
             >
+=======
+            className={`flex-1 justify-center items-center p-3 rounded-lg ${
+              timeframe === tf ? "bg-blue-600 text-white" : "bg-gray-200"
+            }`}
+          >
+            <Text className={`text-lg font-semibold ${timeframe === tf ? "text-white" : "text-black"}`}>
+>>>>>>> 33d18ee7e7ce896849a024e77104947f57bb8efe
               {label}
             </Text>
           </TouchableOpacity>
@@ -82,8 +99,9 @@ const FinancialDashboard = () => {
       </View>
 
       {/* View Toggle */}
-      <View className="flex-row justify-around mb-4">
+      <View className="flex-row justify-between mb-6">
         {[
+<<<<<<< HEAD
           { label: "Income", value: "income" },
           { label: "Expenses", value: "expenses" },
           { label: "Taxes", value: "taxes" },
@@ -92,6 +110,21 @@ const FinancialDashboard = () => {
             <Text
               className={`text-lg font-semibold ${view === v ? "text-blue-600" : "text-gray-500"}`}
             >
+=======
+          { label: "Income", value: "income", icon: <MaterialIcons name="attach-money" size={24} color="green" /> },
+          { label: "Expenses", value: "expenses", icon: <MaterialIcons name="money-off" size={24} color="red" /> },
+          { label: "Taxes", value: "taxes", icon: <MaterialIcons name="receipt" size={24} color="blue" /> },
+        ].map(({ label, value: v, icon }) => (
+          <TouchableOpacity
+            key={v}
+            onPress={() => setView(v as ViewType)}
+            className={`flex-1 justify-center items-center p-3 rounded-lg ${
+              view === v ? "bg-blue-600 text-white" : "bg-gray-200"
+            }`}
+          >
+            {icon}
+            <Text className={`text-lg font-semibold ${view === v ? "text-white" : "text-black"}`}>
+>>>>>>> 33d18ee7e7ce896849a024e77104947f57bb8efe
               {label}
             </Text>
           </TouchableOpacity>
@@ -113,12 +146,17 @@ const FinancialDashboard = () => {
       </View>
 
       {/* Summary Section */}
-      <View className="mt-8 space-y-4">
+      <View className="mt-8 space-y-4 p-4 bg-gray-100 rounded-lg shadow-lg">
         <View className="flex-row justify-between">
+<<<<<<< HEAD
           <Text className="text-lg font-medium text-gray-700">
             Property Value
           </Text>
           <Text className="text-lg font-bold text-green-600">$150,000</Text>
+=======
+          <Text className="text-lg font-medium text-gray-700">Gross Revenue</Text>
+          <Text className="text-lg font-bold text-green-600">$30,000</Text>
+>>>>>>> 33d18ee7e7ce896849a024e77104947f57bb8efe
         </View>
         <View className="flex-row justify-between">
           <Text className="text-lg font-medium text-gray-700">
