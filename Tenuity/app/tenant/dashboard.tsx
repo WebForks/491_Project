@@ -13,12 +13,14 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { useRouter, Link } from "expo-router";
 import { supabase } from "../../utils/supabase";
 import { useSidebar } from "./_layout"; // tenant's layout file
+import { handleRentPayment } from "@/utils/stripe/payment";
 
 interface MaintenanceRequest {
   title: string;
 }
 
 export default function TenantDashboard() {
+  const router = useRouter();
   const { toggleSidebar } = useSidebar(); // Use the tenant's sidebar context
   const [userName, setUserName] = useState<string>("");
   const [maintenanceRequests, setMaintenanceRequests] = useState<
@@ -109,7 +111,10 @@ export default function TenantDashboard() {
 
         {/* Action Buttons */}
         <View className="flex-row justify-around px-4 py-2 mb-4">
-          <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
+          <TouchableOpacity
+            className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center"
+            onPress={handleRentPayment}
+          >
             <Ionicons name="cash-outline" size={24} color="white" />
           </TouchableOpacity>
           <Link href="./tnDocuments" asChild>
