@@ -10,6 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const initialDocuments = [
   { id: 1, name: "Lease Agreement", property: "Property A" },
@@ -26,21 +27,20 @@ export default function TenantDocuments() {
   };
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <SafeAreaView className="flex-1 bg-white p-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
         {/* Centered Logo */}
-        <View className="flex-1 justify-center items-center">
-          <Link href="./dashboard" asChild>
-            <Pressable>
-              <Image
-                source={require("../../assets/images/logo.png")}
-                className="w-[100px] h-[100px]"
-                resizeMode="contain"
-              />
-            </Pressable>
-          </Link>
-        </View>
+        <TouchableOpacity
+          className="flex-1 justify-center items-center"
+          onPress={() => router.replace("/tenant/dashboard")}
+        >
+          <Image
+            source={require("../../assets/images/logo.png")}
+            className="w-[100px] h-[100px]"
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
 
         {/* Profile Icon Positioned to the Top-Right */}
         <View className="absolute top-4 right-4">
@@ -110,6 +110,6 @@ export default function TenantDocuments() {
           </View>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 }

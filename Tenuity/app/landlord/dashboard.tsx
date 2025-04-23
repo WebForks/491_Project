@@ -17,6 +17,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { supabase } from "../../utils/supabase";
 import { useSidebar } from "./_layout";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Maintenance {
   id: number;
@@ -37,7 +38,7 @@ export default function Dashboard() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
-    {}
+    {},
   );
 
   useEffect(() => {
@@ -60,10 +61,10 @@ export default function Dashboard() {
         // Fetch properties where landlord_uuid matches the user's ID
         const { data: propertiesData, error: propertiesError } = await supabase
           .from("Properties")
-          .select("id, address, landlord_uuid")  // Fetching additional info if needed
+          .select("id, address, landlord_uuid") // Fetching additional info if needed
           .eq("landlord_uuid", user.id);
 
-        console.log("Properties Data:", propertiesData); // Log the fetched properties data
+        // console.log("Properties Data:", propertiesData); // Log the fetched properties data
 
         if (propertiesError) {
           console.error("Error fetching properties:", propertiesError.message);
@@ -82,20 +83,20 @@ export default function Dashboard() {
         if (maintenanceError) {
           console.error(
             "Error fetching maintenance requests:",
-            maintenanceError.message
+            maintenanceError.message,
           );
         } else {
           // Cross-reference maintenance requests with properties to get addresses
           const maintenanceWithAddresses = maintenanceData.map(
             (maintenance) => {
               const property = propertiesData?.find(
-                (p) => p.id === maintenance.address
+                (p) => p.id === maintenance.address,
               );
               return {
                 ...maintenance,
                 address: property ? property.address : "Unknown Address",
               };
-            }
+            },
           );
 
           setMaintenanceRequests(maintenanceWithAddresses);
@@ -126,13 +127,13 @@ export default function Dashboard() {
     } else {
       // Hide the task by removing it from state
       setMaintenanceRequests((prev) =>
-        prev.filter((request) => request.id !== id)
+        prev.filter((request) => request.id !== id),
       );
     }
   };
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Top Bar */}
       <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity onPress={toggleSidebar}>
@@ -169,7 +170,11 @@ export default function Dashboard() {
               <Link
                 href={{
                   pathname: "../landlord/propertyDetails",
-                  params: { id: item.id, address: item.address, name: item.address },
+                  params: {
+                    id: item.id,
+                    address: item.address,
+                    name: item.address,
+                  },
                 }}
                 asChild
               >
@@ -213,32 +218,32 @@ export default function Dashboard() {
           <Text className="text-gray-500">No maintenance issues reported.</Text>
         ) : (
           <FlatList
-          data={maintenanceRequests}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Link
-              href={{
-                pathname: "../landlord/maintenance",
-                params: {
-                  id: item.id.toString(),
-                  title: item.title,
-                },
-              }}
-              asChild
-            >
-              <Pressable className="flex-row items-center gap-x-4 mb-3 bg-gray-100 p-3 rounded-lg">
-              <Checkbox
-                value={checkedItems[item.id] ?? false}
-                onValueChange={() => markAsCompleted(item.id)}
-              />
-                <View>
-                  <Text className="text-lg font-medium">{item.title}</Text>
-                  <Text className="text-gray-600">{item.address}</Text>
-                </View>
-              </Pressable>
-            </Link>
-          )}
-        />
+            data={maintenanceRequests}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <Link
+                href={{
+                  pathname: "../landlord/maintenance",
+                  params: {
+                    id: item.id.toString(),
+                    title: item.title,
+                  },
+                }}
+                asChild
+              >
+                <Pressable className="flex-row items-center gap-x-4 mb-3 bg-gray-100 p-3 rounded-lg">
+                  <Checkbox
+                    value={checkedItems[item.id] ?? false}
+                    onValueChange={() => markAsCompleted(item.id)}
+                  />
+                  <View>
+                    <Text className="text-lg font-medium">{item.title}</Text>
+                    <Text className="text-gray-600">{item.address}</Text>
+                  </View>
+                </Pressable>
+              </Link>
+            )}
+          />
         )}
       </View>
 
@@ -257,6 +262,6 @@ export default function Dashboard() {
           </TouchableOpacity>
         </Link>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

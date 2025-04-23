@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
+import 
+{
   View,
   Text,
   ScrollView,
@@ -14,7 +15,8 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useSidebar } from './_layout';
 
-type Tenant = {
+type Tenant = 
+{
   id: number;
   user_id: string;
   first_name: string;
@@ -142,13 +144,8 @@ export default function TenantListScreen() {
                   Phone: {tenant.phone_number}
                 </Text>
               </View>
-              <Link
-                href={{
-                  pathname: '/landlord/landlordChat',
-                  params: { chatId: tenant.user_id },
-                }}
-                asChild
-              >
+              <Link href={{ pathname: "/landlord/landlordChat", params: { chatId: tenant.user_id } }} asChild>
+
                 <TouchableOpacity
                   style={{
                     backgroundColor: '#5C4DFF',

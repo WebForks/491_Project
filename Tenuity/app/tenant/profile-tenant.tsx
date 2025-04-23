@@ -229,7 +229,6 @@ export default function ProfileTenant() {
           />
         </TouchableOpacity>
 
-				
         <TouchableOpacity>
           <AntDesign name="user" size={35} color="black" />
         </TouchableOpacity>
@@ -275,15 +274,6 @@ export default function ProfileTenant() {
         className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
       >
         <Text className="text-white font-bold text-lg">Change Password</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        className="bg-[#38B6FF] w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
-        // onPress={() => router.replace("/tenant/register-payment")} FOR LATER USE
-      >
-        <Text className="text-white font-bold text-lg">
-          Payment Preferences
-        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity

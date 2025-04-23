@@ -30,7 +30,9 @@ export default function ResetPassword() {
   // Validate the new password
   const validateNewPassword = () => {
     if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_])[A-Za-z\d@$!%*?&\-_]{8,}$/.test(newPassword)
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_])[A-Za-z\d@$!%*?&\-_]{8,}$/.test(
+        newPassword,
+      )
     ) {
       setErrors((prev) => ({
         ...prev,
@@ -61,7 +63,10 @@ export default function ResetPassword() {
     validateConfirmPassword();
 
     if (errors.newPassword || errors.confirmPassword) {
-      Alert.alert("Error", "Please fix the highlighted fields before proceeding.");
+      Alert.alert(
+        "Error",
+        "Please fix the highlighted fields before proceeding.",
+      );
       return;
     }
 
@@ -91,22 +96,28 @@ export default function ResetPassword() {
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View className="flex-1 justify-center items-center px-4">
               {/* Logo & Title */}
-              <View className="items-center mb-8">
+              <TouchableOpacity
+                className="items-center mb-8"
+                onPress={() => router.navigate("/landlord/dashboard")}
+              >
                 <Image
                   source={require("../../../assets/images/logo.png")}
                   className="w-[100px] h-[100px] mb-2"
                   resizeMode="contain"
                 />
-              </View>
+              </TouchableOpacity>
 
               {/* Form Container */}
               <View className="w-full max-w-sm border-2 border-blue-300 rounded-lg p-4">
-                <Text className="text-base font-semibold mb-2">Enter New Password</Text>
+                <Text className="text-base font-semibold mb-2">
+                  Enter New Password
+                </Text>
 
                 {/* New Password Field */}
                 <Text className="text-left text-sm mb-2 text-gray-500">
-                  Password must be at least 8 characters long, include an uppercase letter, a
-                  lowercase letter, a number, and a special character (e.g., !, @, #, $, -, _).
+                  Password must be at least 8 characters long, include an
+                  uppercase letter, a lowercase letter, a number, and a special
+                  character (e.g., !, @, #, $, -, _).
                 </Text>
                 <TextInput
                   placeholder="New Password"
@@ -119,7 +130,9 @@ export default function ResetPassword() {
                   } rounded p-3 mb-1`}
                 />
                 {errors.newPassword ? (
-                  <Text className="text-red-500 mb-3">{errors.newPassword}</Text>
+                  <Text className="text-red-500 mb-3">
+                    {errors.newPassword}
+                  </Text>
                 ) : null}
 
                 {/* Repeat New Password Field */}
@@ -130,11 +143,15 @@ export default function ResetPassword() {
                   onBlur={validateConfirmPassword}
                   secureTextEntry
                   className={`border-2 ${
-                    errors.confirmPassword ? "border-red-500" : "border-blue-300"
+                    errors.confirmPassword
+                      ? "border-red-500"
+                      : "border-blue-300"
                   } rounded p-3 mb-1`}
                 />
                 {errors.confirmPassword ? (
-                  <Text className="text-red-500 mb-3">{errors.confirmPassword}</Text>
+                  <Text className="text-red-500 mb-3">
+                    {errors.confirmPassword}
+                  </Text>
                 ) : null}
 
                 {/* Reset Password Button */}

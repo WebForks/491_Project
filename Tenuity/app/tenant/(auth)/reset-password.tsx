@@ -48,13 +48,16 @@ export default function ResetPassword() {
   return (
     <View className="flex-1 bg-white px-4 justify-center items-center">
       {/* Logo & Title */}
-      <View className="items-center mb-8">
+      <TouchableOpacity
+        className="items-center mb-8"
+        onPress={() => router.replace("/tenant/dashboard")}
+      >
         <Image
           source={require("../../../assets/images/logo.png")}
           className="w-[100px] h-[100px] mb-2"
           resizeMode="contain"
         />
-      </View>
+      </TouchableOpacity>
 
       {/* Form Container */}
       <View className="w-full max-w-sm border-2 border-blue-300 rounded-lg p-4">
