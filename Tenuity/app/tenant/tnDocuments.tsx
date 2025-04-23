@@ -12,11 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
-<<<<<<< HEAD
-import { SafeAreaView } from "react-native-safe-area-context";
-=======
 import { supabase } from "../../utils/supabase";
->>>>>>> 33d18ee7e7ce896849a024e77104947f57bb8efe
 
 type Document = {
   id: number;
@@ -41,9 +37,7 @@ export default function TenantDocuments() {
   useEffect(() => {
     const fetchDocuments = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("Documents")
-        .select("*");
+      const { data, error } = await supabase.from("Documents").select("*");
 
       if (error) {
         console.error("Error fetching documents:", error.message);
@@ -63,25 +57,12 @@ export default function TenantDocuments() {
       console.warn("No file URL provided.");
     }
   };
-  
 
   return (
-    <SafeAreaView className="flex-1 bg-white p-4">
+    <View className="flex-1 bg-white p-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
         {/* Centered Logo */}
-<<<<<<< HEAD
-        <TouchableOpacity
-          className="flex-1 justify-center items-center"
-          onPress={() => router.replace("/tenant/dashboard")}
-        >
-          <Image
-            source={require("../../assets/images/logo.png")}
-            className="w-[100px] h-[100px]"
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-=======
         <View className="flex-1 justify-center items-center">
           <Link href="../landlord/dashboard" asChild>
             <Pressable>
@@ -93,7 +74,6 @@ export default function TenantDocuments() {
             </Pressable>
           </Link>
         </View>
->>>>>>> 33d18ee7e7ce896849a024e77104947f57bb8efe
 
         {/* Profile Icon */}
         <View className="absolute top-4 right-4">
@@ -121,7 +101,9 @@ export default function TenantDocuments() {
               >
                 <View className="flex-row items-center">
                   <Ionicons name="folder-outline" size={24} color="black" />
-                  <Text className="ml-2 text-lg font-semibold">{item.name}</Text>
+                  <Text className="ml-2 text-lg font-semibold">
+                    {item.name}
+                  </Text>
                 </View>
                 <Ionicons
                   name={
@@ -136,30 +118,6 @@ export default function TenantDocuments() {
 
               <View className="h-[1px] bg-blue-500 w-full" />
 
-<<<<<<< HEAD
-            {/* Dropdown Document Details */}
-            {expandedDocument === item.id && (
-              <View className="p-3">
-                <Text className="text-sm text-gray-700">
-                  Property: {item.property}
-                </Text>
-                {/* Add functionality for document actions here */}
-                <TouchableOpacity className="flex-row items-center p-2 mt-2">
-                  <Ionicons
-                    name="eye"
-                    size={20}
-                    color="blue"
-                    className="mr-2"
-                  />
-                  <Text className="text-blue-500">View Document</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        )}
-      />
-    </SafeAreaView>
-=======
               {expandedDocument === item.id && (
                 <View className="p-3">
                   <Text className="text-sm text-gray-700 mb-2">
@@ -183,6 +141,6 @@ export default function TenantDocuments() {
         />
       )}
     </View>
->>>>>>> 33d18ee7e7ce896849a024e77104947f57bb8efe
   );
 }
+
