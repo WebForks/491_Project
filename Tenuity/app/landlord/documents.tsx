@@ -17,7 +17,11 @@ import { useSidebar } from "./_layout";
 
 const initialProperties = [
   { id: 1, name: "Property A", documents: ["Lease Agreement", "Tax Form"] },
-  { id: 2, name: "Property B", documents: ["Rental Agreement", "Inspection Report"] },
+  {
+    id: 2,
+    name: "Property B",
+    documents: ["Rental Agreement", "Inspection Report"],
+  },
 ];
 
 export default function Documents() {
@@ -42,8 +46,8 @@ export default function Documents() {
       prevProperties.map((property) =>
         property.id === propertyId
           ? { ...property, documents: [...property.documents, newDoc] }
-          : property
-      )
+          : property,
+      ),
     );
   };
 
@@ -85,7 +89,12 @@ export default function Documents() {
               onPress={() => toggleExpand(item.id)}
             >
               <View className="flex-row items-center">
-                <Ionicons name="folder-outline" size={24} color="black" className="mr-2" />
+                <Ionicons
+                  name="folder-outline"
+                  size={24}
+                  color="black"
+                  className="mr-2"
+                />
                 <Link
                   href={{
                     pathname: "../landlord/propertyDetails",
@@ -101,7 +110,11 @@ export default function Documents() {
                 </Link>
               </View>
               <Ionicons
-                name={expandedProperty === item.id ? "chevron-down" : "chevron-forward"}
+                name={
+                  expandedProperty === item.id
+                    ? "chevron-down"
+                    : "chevron-forward"
+                }
                 size={24}
                 color="black"
               />
@@ -118,7 +131,12 @@ export default function Documents() {
                     key={index}
                     className="flex-row items-center p-3 bg-blue-500 rounded-2xl my-2"
                   >
-                    <FontAwesome name="eye" size={20} color="white" className="mr-2" />
+                    <FontAwesome
+                      name="eye"
+                      size={20}
+                      color="white"
+                      className="mr-2"
+                    />
                     <Text className="text-base text-white">{doc}</Text>
                   </View>
                 ))}
@@ -127,7 +145,12 @@ export default function Documents() {
                   className="flex-row items-center p-2 mt-2"
                   onPress={() => pickDocument(item.id)}
                 >
-                  <Ionicons name="add-circle-outline" size={20} color="blue" className="mr-2" />
+                  <Ionicons
+                    name="add-circle-outline"
+                    size={20}
+                    color="blue"
+                    className="mr-2"
+                  />
                   <Text className="text-blue-500">Add New Document</Text>
                 </TouchableOpacity>
               </View>

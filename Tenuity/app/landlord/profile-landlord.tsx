@@ -17,6 +17,7 @@ import { useSidebar } from "./_layout";
 import { supabase } from "../../utils/supabase";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
+import * as Sharing from "expo-sharing";
 
 export default function ProfileLandlord() {
   const { toggleSidebar } = useSidebar();
@@ -24,7 +25,7 @@ export default function ProfileLandlord() {
 
   const [landlord, setLandlord] = useState<any>(null);
   const [profileImage, setProfileImage] = useState(
-    require("../../assets/images/react-logo.png"),
+    require("../../assets/images/react-logo.png")
   );
   const [isLoading, setIsLoading] = useState(true);
 
@@ -98,7 +99,7 @@ export default function ProfileLandlord() {
           if (deleteError) {
             console.error(
               "Error deleting old profile picture:",
-              deleteError.message,
+              deleteError.message
             );
             return;
           }
@@ -106,7 +107,7 @@ export default function ProfileLandlord() {
           console.log("Old profile picture deleted successfully");
         } else {
           console.error(
-            "Could not extract file name from old profile picture path",
+            "Could not extract file name from old profile picture path"
           );
         }
       }
@@ -155,7 +156,7 @@ export default function ProfileLandlord() {
       if (updateError) {
         console.error(
           "Error updating profile picture in database:",
-          updateError.message,
+          updateError.message
         );
       } else {
         console.log("Profile picture updated successfully!");
@@ -176,7 +177,7 @@ export default function ProfileLandlord() {
         { text: "Choose from Gallery", onPress: pickImage },
         { text: "Take Photo", onPress: takePhoto },
       ],
-      { cancelable: true },
+      { cancelable: true }
     );
   };
 
@@ -202,6 +203,76 @@ export default function ProfileLandlord() {
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       uploadProfilePicture(result.assets[0].uri);
+    }
+  };
+
+  const exportData = async () => {
+    try {
+      setIsLoading(true);
+
+      // Get current user
+      const { data: user, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        Alert.alert("Error", "Could not fetch user.");
+        setIsLoading(false);
+        return;
+      }
+      const userId = user.user.id;
+
+      // Fetch landlord info
+      const { data: landlordData, error: landlordError } = await supabase
+        .from("Landlords")
+        .select("first_name, last_name, email, phone_number, created_at")
+        .eq("user_id", userId)
+        .single();
+
+      if (landlordError) {
+        Alert.alert("Error", "Could not fetch landlord info.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Save landlord info as JSON
+      const landlordJson = JSON.stringify(landlordData, null, 2);
+      const landlordFileUri = FileSystem.documentDirectory + "user_info.json";
+      await FileSystem.writeAsStringAsync(landlordFileUri, landlordJson, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      // Fetch tenants info
+      const { data: tenantsData, error: tenantsError } = await supabase
+        .from("Tenants")
+        .select("first_name, last_name, email, phone_number, created_at")
+        .eq("landlord_id", userId);
+
+      if (tenantsError) {
+        Alert.alert("Error", "Could not fetch tenants info.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Save tenants info as JSON
+      const tenantsJson = JSON.stringify(tenantsData, null, 2);
+      const tenantsFileUri = FileSystem.documentDirectory + "tenant_info.json";
+      await FileSystem.writeAsStringAsync(tenantsFileUri, tenantsJson, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      // Share the files (download to device)
+      await Sharing.shareAsync(landlordFileUri, {
+        mimeType: "application/json",
+        dialogTitle: "Export Landlord Info",
+      });
+      await Sharing.shareAsync(tenantsFileUri, {
+        mimeType: "application/json",
+        dialogTitle: "Export Tenant Info",
+      });
+
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      Alert.alert("Error", "An error occurred while exporting data.");
+      console.error(error);
     }
   };
 
@@ -283,6 +354,13 @@ export default function ProfileLandlord() {
         <Text className="text-white font-bold text-lg">
           Payment Preferences
         </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        className="bg-green-600 w-[90%] py-4 rounded-2xl items-center mb-4 mx-auto"
+        onPress={exportData}
+      >
+        <Text className="text-white font-bold text-lg">Export Data</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
