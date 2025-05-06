@@ -68,7 +68,7 @@ export default function TenantDocuments() {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         copyToCacheDirectory: true,
-        type: "*/*", // Change to "application/pdf" if you want to limit to PDFs
+        type: "*/*",
         multiple: false,
       });
 
@@ -77,7 +77,7 @@ export default function TenantDocuments() {
       setUploading(true);
       const file = result.assets[0];
       const fileUri = file.uri;
-      const fileName = `documents/${Date.now()}-${file.name}`;
+      const fileName = `${Date.now()}-${file.name}`;
 
       const fileBase64 = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -111,7 +111,7 @@ export default function TenantDocuments() {
           description: "Uploaded via mobile app",
           file_url: publicUrl,
           path: fileName,
-          property_id: 1, // 🔧 Update this to match the tenant's actual property_id
+          property_id: 1,
         },
       ]);
 
@@ -135,25 +135,24 @@ export default function TenantDocuments() {
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
         {/* Centered Logo */}
-        <View className="flex-1 justify-center items-center">
-          <Link href="../landlord/dashboard" asChild>
-            <Pressable>
-              <Image
-                source={require("../../assets/images/logo.png")}
-                className="w-[100px] h-[100px]"
-                resizeMode="contain"
-              />
-            </Pressable>
-          </Link>
-        </View>
+        <TouchableOpacity
+          className="flex-1 justify-center items-center"
+          onPress={() => router.replace("/tenant/dashboard")}
+        >
+          <Image
+            source={require("../../assets/images/logo.png")}
+            className="w-[100px] h-[100px]"
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
 
         {/* Profile Icon */}
         <View className="absolute top-4 right-4">
-          <Link href="./profile-tenant" asChild>
-            <TouchableOpacity>
-              <AntDesign name="user" size={35} color="black" />
-            </TouchableOpacity>
-          </Link>
+          <TouchableOpacity
+            onPress={() => router.replace("/tenant/profile-tenant")}
+          >
+            <AntDesign name="user" size={35} color="black" />
+          </TouchableOpacity>
         </View>
       </View>
 
