@@ -145,8 +145,28 @@ export default function Maintenance() {
   
       console.log("Landlord UUID:", landlordUuid);
   
-      // Use a default address for now
-      const address = "Unknown Address";
+      // Step 3: Fetch the address from the Properties table
+      const { data: propertyData, error: propertyError } = await supabase
+        .from("Properties")
+        .select("address")
+        .eq("tenant_uuid", tenantUuid)
+        .single();
+  
+      if (propertyError) {
+        console.error("Property data error:", propertyError);
+        Alert.alert("Error", "Failed to retrieve property address. Please try again.");
+        return;
+      }
+  
+      const address = propertyData?.address;
+  
+      if (!address) {
+        Alert.alert("Error", "No address found for the tenant's property.");
+        console.log("Validation failed: Address not found");
+        return;
+      }
+  
+      console.log("Property Address:", address);
   
       // Step 4: Upload the image
       console.log("Uploading image...");
@@ -162,7 +182,7 @@ export default function Maintenance() {
           image_url: uploadedImageUrl,
           tenant_uuid: tenantUuid,
           landlord_uuid: landlordUuid,
-          address: address, // Use the default address
+          address: address,
           completed: false,
           created_at: new Date().toISOString(),
         },
