@@ -16,8 +16,10 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { Buffer } from "buffer";
+import Entypo from "@expo/vector-icons/Entypo";
 import { supabase } from "../../utils/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSidebar } from "./_layout";
 
 type Document = {
   id: number;
@@ -30,6 +32,7 @@ type Document = {
 };
 
 export default function Documents() {
+  const { toggleSidebar } = useSidebar();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [expandedDocument, setExpandedDocument] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -134,6 +137,9 @@ export default function Documents() {
     <SafeAreaView className="flex-1 bg-white p-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
+        <TouchableOpacity onPress={toggleSidebar}>
+          <Entypo name="menu" size={35} color="black" />
+        </TouchableOpacity>
         {/* Centered Logo */}
         <TouchableOpacity
           className="flex-1 justify-center items-center"
@@ -147,13 +153,11 @@ export default function Documents() {
         </TouchableOpacity>
 
         {/* Profile Icon */}
-        <View className="absolute top-4 right-4">
-          <TouchableOpacity
-            onPress={() => router.replace("/landlord/profile-landlord")}
-          >
-            <AntDesign name="user" size={35} color="black" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={() => router.replace("/landlord/profile-landlord")}
+        >
+          <AntDesign name="user" size={35} color="black" />
+        </TouchableOpacity>
       </View>
 
       <Text className="text-3xl font-bold text-center mb-4">Documents</Text>
