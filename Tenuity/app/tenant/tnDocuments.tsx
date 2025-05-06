@@ -77,7 +77,7 @@ export default function TenantDocuments() {
       setUploading(true);
       const file = result.assets[0];
       const fileUri = file.uri;
-      const fileName = `documents/${Date.now()}-${file.name}`;
+      const fileName = `${Date.now()}-${file.name}`;
 
       const fileBase64 = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
