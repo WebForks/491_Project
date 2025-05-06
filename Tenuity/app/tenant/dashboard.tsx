@@ -150,13 +150,14 @@ export default function TenantDashboard() {
           )}
 
           {/* New Request Button */}
-          <TouchableOpacity className="flex-row items-center space-x-2 mt-3">
+          <TouchableOpacity
+          onPress={() => router.push("./tenantMaintenance")}
+          className="flex-row items-center space-x-2 mt-3"
+          >
             <Ionicons name="add-outline" size={24} color="#3ab7ff" />
             <View>
               <Text className="font-semibold text-lg">New</Text>
-              <Text className="text-gray-500 text-base">
-                Add maintenance request
-              </Text>
+              <Text className="text-gray-500 text-base">Add maintenance request</Text>
             </View>
           </TouchableOpacity>
         </View>

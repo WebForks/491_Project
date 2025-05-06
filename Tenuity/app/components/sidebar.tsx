@@ -110,7 +110,7 @@ export default function Sidebar({ isOpen, onClose, userType }: SidebarProps) {
           {
             label: "Maintenance",
             icon: <MaterialIcons name="build" size={24} color="black" />,
-            path: "./maintenance",
+            path: "./tenantMaintenance",
           },
           {
             label: "Messaging",

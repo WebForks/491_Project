@@ -21,7 +21,7 @@ interface Maintenance {
   description?: string;
   address: string;
   completed: boolean;
-  image_url?: string[];
+  image_url?: string;
 }
 
 export default function MaintenanceDetails() {
@@ -143,26 +143,18 @@ export default function MaintenanceDetails() {
 
           {/* Images Section */}
           <View className="mb-6">
-            <Text className="text-lg font-semibold text-gray-800 mb-3">
-              Images
-            </Text>
-            {maintenance.image_url?.length ? (
-              maintenance.image_url.map((imagePath, index) => {
-                const imageUrl = getImageUrl(imagePath);
-                return (
-                  <Image
-                    key={index}
-                    source={{ uri: imageUrl }}
-                    style={{
-                      width: "100%",
-                      height: 220,
-                      borderRadius: 16,
-                      marginBottom: 15,
-                    }}
-                    resizeMode="cover"
-                  />
-                );
-              })
+            <Text className="text-lg font-semibold text-gray-800 mb-3">Images</Text>
+            {maintenance.image_url ? (
+              <Image
+                source={{ uri: maintenance.image_url }}
+                style={{
+                  width: "100%",
+                  height: 220,
+                  borderRadius: 16,
+                  marginBottom: 15,
+                }}
+                resizeMode="cover"
+              />
             ) : (
               <Text className="text-gray-600">No images uploaded.</Text>
             )}
