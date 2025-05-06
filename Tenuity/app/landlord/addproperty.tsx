@@ -26,6 +26,7 @@ export default function AddProperty() {
   const [image, setImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [tenantRent, setTenantRent] = useState("");
+  const [emailError, setEmailError] = useState(false);
   const { toggleSidebar } = useSidebar();
 
   const pickImage = async () => {
@@ -46,7 +47,7 @@ export default function AddProperty() {
   };
 
   const handleAddProperty = async () => {
-    if (!address || !bedroomCount || !bathroomCount || !description || !tenantRent) {
+    if (!address || !bedroomCount || !bathroomCount || !description || !tenantRent || !tenantEmail) {
       Alert.alert("Please fill in all the required fields.");
       return;
     }
@@ -54,14 +55,32 @@ export default function AddProperty() {
     try {
       setIsLoading(true);
 
+      // Step 1: Validate tenant email
+      const { data: tenantData, error: tenantError } = await supabase
+        .from("Tenants")
+        .select("user_id")
+        .eq("email", tenantEmail)
+        .single();
+
+      if (tenantError || !tenantData) {
+        setEmailError(true); // Highlight the email input field
+        Alert.alert("Error", "No tenant found with the provided email.");
+        setIsLoading(false);
+        return;
+      }
+
+      setEmailError(false); // Reset email error state if validation passes
+      const tenantUuid = tenantData.user_id;
+
+      // Step 2: Get landlord UUID
       const {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
       if (userError) throw userError;
 
-      const landlord_uuid = user?.id;
-      if (!landlord_uuid) {
+      const landlordUuid = user?.id;
+      if (!landlordUuid) {
         Alert.alert("Error", "User not authenticated.");
         return;
       }
@@ -103,7 +122,8 @@ export default function AddProperty() {
 
       const { error } = await supabase.from("Properties").insert([
         {
-          landlord_uuid,
+          landlord_uuid: landlordUuid,
+          tenant_uuid: tenantUuid,
           address,
           bedroom_count: bedroomCount,
           bathroom_count: bathroomCount,
@@ -214,11 +234,21 @@ export default function AddProperty() {
 
       <Text className="text-lg">Tenant Email</Text>
       <TextInput
-        className="border border-blue-300 p-3 rounded mb-4"
+        className={`border p-3 rounded mb-4 ${
+          emailError ? "border-red-500" : "border-blue-300"
+        }`}
         placeholder="Email"
         value={tenantEmail}
-        onChangeText={setTenantEmail}
+        onChangeText={(text) => {
+          setTenantEmail(text);
+          setEmailError(false); // Reset error state on input change
+        }}
       />
+      {emailError && (
+        <Text className="text-red-500 text-sm mb-4">
+          No tenant registered with that email.
+        </Text>
+      )}
 
       <Text className="text-lg">Rent Amount</Text>
       <TextInput
