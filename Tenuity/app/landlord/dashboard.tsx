@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
     {},
   );
+  const router = useRouter();
 
   useEffect(() => {
     let isMounted = true;
@@ -147,11 +148,11 @@ export default function Dashboard() {
           resizeMode="contain"
         />
 
-        <Link href="./profile-landlord" asChild>
-          <TouchableOpacity>
-            <AntDesign name="user" size={35} color="black" />
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity
+          onPress={() => router.replace("/landlord/profile-landlord")}
+        >
+          <AntDesign name="user" size={35} color="black" />
+        </TouchableOpacity>
       </View>
 
       {/* Properties Section */}
