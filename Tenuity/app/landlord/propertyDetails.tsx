@@ -41,78 +41,44 @@ const PropertyDetails = () => {
 
   
   const handleRemoveTenant = async () => {
-    console.log('Remove Tenant button pressed'); // Debug log 1
-    
     if (!property?.id) {
-      console.log('No property ID available'); // Debug log 2
       Alert.alert("Error", "Property information is missing");
       return;
     }
   
-    console.log('Attempting to remove tenant from property:', property.id); // Debug log 3
-  
     try {
       setRemovingTenant(true);
-      
-      // First verify we can connect to Supabase
-      const { data: testData, error: testError } = await supabase
-        .rpc('test_connection');
-      
-      if (testError) {
-        console.log('Supabase connection test failed:', testError); // Debug log 4
-        throw new Error("Database connection failed");
-      }
   
-      console.log('Supabase connection verified, proceeding with removal'); // Debug log 5
-      
       const { error } = await supabase
         .from("Properties")
         .update({
           tenant_name: null,
           tenant_email: null,
-          updated_at: new Date().toISOString() // Track when change was made
         })
-        .eq("id", property.id)
-        .select(); // Request updated record
+        .eq("id", property.id);
   
-      console.log('Update operation completed', { error }); // Debug log 6
+      if (error) throw error;
   
-      if (error) {
-        console.error('Supabase error details:', { // Debug log 7
-          code: error.code,
-          message: error.message,
-          details: error.details
-        });
-        throw error;
-      }
-  
-      console.log('Tenant removed successfully'); // Debug log 8
-      Alert.alert("Success", "Tenant has been removed");
-      await fetchProperty(); // Refresh data
-      
-    } catch (error) {
-      console.error('Full error details:', error); // Debug log 9
-      
-      const errorMessage = error instanceof Error ? error.message : 
-        typeof error === 'string' ? error : 
-        "Failed to remove tenant";
-      
-      Alert.alert("Error", errorMessage);
+      Alert.alert("Success", "Tenant removed successfully.");
+      await fetchProperty(); // Refresh state
     } finally {
-      console.log('Operation complete, resetting UI state'); // Debug log 10
       setRemovingTenant(false);
     }
   };
+  
 
   const handleAddTenant = async () => {
+    console.log('handleAddTenant triggered');
+    
     if (!newTenantName.trim()) {
       Alert.alert("Error", "Please enter tenant name");
       return;
     }
   
     try {
-      setAddingTenant(true);
-      
+      console.log('Adding tenant...');  
+      setAddingTenant(true);  // Set addingTenant to true when starting the process
+  
       const { error } = await supabase
         .from("Properties")
         .update({
@@ -123,16 +89,20 @@ const PropertyDetails = () => {
   
       if (error) throw error;
   
+      // Success logic
       Alert.alert("Success", "Tenant added successfully!");
+      
+      // Reset fields
       setNewTenantName("");
       setNewTenantEmail("");
-      setAddingTenant(false);
-      await fetchProperty();
       
+      await fetchProperty();  // Refresh property data
+  
     } catch (error) {
+      console.error("Error adding tenant:", error);
       let errorMessage = "Failed to add tenant";
       
-      // Type-safe error handling
+      // Handle error message types
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === 'string') {
@@ -143,9 +113,13 @@ const PropertyDetails = () => {
       
       Alert.alert("Error", errorMessage);
     } finally {
-      setAddingTenant(false);
+      console.log('Process complete, setting addingTenant to false');
+      setAddingTenant(false);  // Set addingTenant back to false when done
     }
   };
+  
+  
+  
 
   return (
     <SafeAreaView className="flex-1 bg-white p-4">
@@ -305,13 +279,13 @@ const PropertyDetails = () => {
               
               <TouchableOpacity
                 onPress={handleAddTenant}
-                disabled={addingTenant || !newTenantName.trim()}
-                className={`bg-blue-500 px-4 py-2 rounded ${addingTenant ? "opacity-50" : ""}`}
+                className="bg-blue-500 px-4 py-2 rounded"
               >
-                <Text className="text-white">
-                  {addingTenant ? "Adding..." : "Add Tenant"}
-                </Text>
+                <Text className="text-white">Add Tenant</Text>
               </TouchableOpacity>
+
+
+
             </View>
           </View>
         </View>

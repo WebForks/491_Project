@@ -184,6 +184,7 @@ export default function Maintenance() {
           landlord_uuid: landlordUuid,
           address: address,
           completed: false,
+          cost: 0, // Auto set cost to 0
           created_at: new Date().toISOString(),
         },
       ]);

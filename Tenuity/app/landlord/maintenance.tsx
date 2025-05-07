@@ -14,6 +14,10 @@ import { useSidebar } from "./_layout";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Modal, TextInput, Alert } from "react-native";
+
+
+
 
 interface Maintenance {
   id: number;
@@ -22,6 +26,7 @@ interface Maintenance {
   address: string;
   completed: boolean;
   image_url?: string;
+  cost?: number;
 }
 
 export default function MaintenanceDetails() {
@@ -30,6 +35,9 @@ export default function MaintenanceDetails() {
   const [maintenance, setMaintenance] = useState<Maintenance | null>(null);
   const [loading, setLoading] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
+  const [showCostModal, setShowCostModal] = useState(false);
+  const [cost, setCost] = useState<string>("");
+  const [updatingCost, setUpdatingCost] = useState(false);
 
   useEffect(() => {
     const fetchMaintenance = async () => {
@@ -78,6 +86,35 @@ export default function MaintenanceDetails() {
     }
   };
 
+  const handleAddCost = async () => {
+    if (!maintenance) return;
+  
+    const parsedCost = parseFloat(cost);
+    if (isNaN(parsedCost)) {
+      Alert.alert("Invalid Input", "Please enter a valid number for cost.");
+      return;
+    }
+  
+    setUpdatingCost(true);
+    const { error } = await supabase
+      .from("Maintenance")
+      .update({ cost: parsedCost })
+      .eq("id", maintenance.id);
+  
+    setUpdatingCost(false);
+    if (error) {
+      Alert.alert("Error", "Failed to update cost.");
+      console.error("Error updating cost:", error.message);
+    } else {
+      Alert.alert("Success", "Cost updated successfully.");
+      setShowCostModal(false);
+      setMaintenance((prev) =>
+        prev ? { ...prev, cost: parsedCost } : null
+      );
+    }
+  };
+  
+
   return (
     <View className="flex-1 bg-white px-4 pt-10 pb-5">
       {/* Header */}
@@ -113,8 +150,8 @@ export default function MaintenanceDetails() {
             {maintenance.title}
           </Text>
 
-          {/* Info Card */}
-          <View className="bg-gray-50 rounded-2xl p-4 shadow-sm mb-6">
+{/* Info Card */}
+<View className="bg-gray-50 rounded-2xl p-4 shadow-sm mb-6">
             <View className="mb-4">
               <Text className="text-sm text-gray-500 mb-1">Address</Text>
               <Text className="text-base text-gray-800">
@@ -133,14 +170,70 @@ export default function MaintenanceDetails() {
               </Text>
             </View>
 
-            <View>
+            <View className="mb-4">
               <Text className="text-sm text-gray-500 mb-1">Description</Text>
               <Text className="text-base text-gray-700">
                 {maintenance.description || "No description provided."}
               </Text>
             </View>
+
+            {/* Cost Display */}
+            <View>
+              <Text className="text-sm text-gray-500 mb-1">Cost</Text>
+              <Text className="text-base text-gray-800">
+                {maintenance.cost != null ? `$${maintenance.cost.toFixed(2)}` : "Not specified"}
+              </Text>
+            </View>
           </View>
 
+          {/* Add Cost Button */}
+          <TouchableOpacity
+            onPress={() => setShowCostModal(true)}
+            className="mt-4 bg-green-600 p-4 rounded-2xl flex-row items-center justify-center"
+          >
+            <MaterialIcons name="attach-money" size={28} color="white" />
+            <Text className="ml-2 text-white font-medium text-base">Add Cost</Text>
+          </TouchableOpacity>
+
+          {/* Cost Modal */}
+          <Modal
+            visible={showCostModal}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setShowCostModal(false)}
+          >
+            <View className="flex-1 justify-center items-center bg-black bg-opacity-50 px-6">
+              <View className="bg-white p-6 rounded-2xl w-full">
+                <Text className="text-lg font-semibold mb-4">Enter Maintenance Cost</Text>
+                <TextInput
+                  placeholder="e.g. 120.50"
+                  keyboardType="numeric"
+                  value={cost}
+                  onChangeText={setCost}
+                  className="border border-gray-300 rounded-xl px-4 py-2 mb-4 text-base"
+                />
+                <View className="flex-row justify-between">
+                  <TouchableOpacity
+                    onPress={() => setShowCostModal(false)}
+                    className="bg-gray-300 px-4 py-2 rounded-xl w-[45%]"
+                  >
+                    <Text className="text-center font-medium">Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleAddCost}
+                    disabled={updatingCost}
+                    className="bg-blue-600 px-4 py-2 rounded-xl w-[45%]"
+                  >
+                    <Text className="text-white text-center font-medium">
+                      {updatingCost ? "Saving..." : "Save"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+          
+          
           {/* Images Section */}
           <View className="mb-6">
             <Text className="text-lg font-semibold text-gray-800 mb-3">Images</Text>
