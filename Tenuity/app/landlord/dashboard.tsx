@@ -51,45 +51,48 @@ export default function Dashboard() {
           data: { user },
           error: userError,
         } = await supabase.auth.getUser();
-  
+
         if (userError || !user) {
           console.error("Error fetching user:", userError?.message);
           return;
         }
-  
+
         if (!isMounted) return;
-  
+
         // Fetch properties where landlord_uuid matches the user's ID
         const { data: propertiesData, error: propertiesError } = await supabase
           .from("Properties")
           .select("id, address, landlord_uuid")
           .eq("landlord_uuid", user.id);
-  
+
         if (propertiesError) {
           console.error("Error fetching properties:", propertiesError.message);
         } else {
           setProperties(propertiesData || []);
         }
-  
+
         // Fetch maintenance requests directly from the Maintenance table
-        const { data: maintenanceData, error: maintenanceError } = await supabase
-          .from("Maintenance")
-          .select("id, title, description, image_url, completed, address")
-          .eq("landlord_uuid", user.id)
-          .eq("completed", false);
-  
+        const { data: maintenanceData, error: maintenanceError } =
+          await supabase
+            .from("Maintenance")
+            .select("id, title, description, image_url, completed, address")
+            .eq("landlord_uuid", user.id)
+            .eq("completed", false);
+
         if (maintenanceError) {
           console.error(
             "Error fetching maintenance requests:",
-            maintenanceError.message
+            maintenanceError.message,
           );
         } else {
           // Directly use the address field from the Maintenance table
-          const maintenanceWithAddresses = maintenanceData.map((maintenance) => ({
-            ...maintenance,
-            address: maintenance.address || "Unknown Address",
-          }));
-  
+          const maintenanceWithAddresses = maintenanceData.map(
+            (maintenance) => ({
+              ...maintenance,
+              address: maintenance.address || "Unknown Address",
+            }),
+          );
+
           setMaintenanceRequests(maintenanceWithAddresses);
         }
       } catch (err) {
@@ -98,9 +101,9 @@ export default function Dashboard() {
         setLoading(false);
       }
     };
-  
+
     fetchData();
-  
+
     return () => {
       isMounted = false;
     };

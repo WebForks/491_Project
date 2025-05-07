@@ -6,6 +6,7 @@ import { Link } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { supabase } from "../../utils/supabase";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type ViewType = "income" | "expenses" | "taxes";
 type TimeframeType = "month" | "lastMonth" | "ytd";
@@ -43,7 +44,14 @@ const FinancialDashboard = () => {
       return (
         properties?.reduce((acc, prop) => {
           const createdAt = new Date(prop.created_at);
-          if (createdAt.getTime() <= new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0).getTime()) {
+          if (
+            createdAt.getTime() <=
+            new Date(
+              startDate.getFullYear(),
+              startDate.getMonth() + 1,
+              0,
+            ).getTime()
+          ) {
             return acc + (prop.rent || 0);
           }
           return acc;
@@ -59,10 +67,8 @@ const FinancialDashboard = () => {
         if (createdAt <= now) {
           const monthsActive = Math.max(
             0,
-            monthDiff(
-              createdAt > startOfYear ? createdAt : startOfYear,
-              now
-            ) + 1
+            monthDiff(createdAt > startOfYear ? createdAt : startOfYear, now) +
+              1,
           );
           return acc + monthsActive * (prop.rent || 0);
         }
@@ -87,7 +93,10 @@ const FinancialDashboard = () => {
     };
 
     const expenseMonth = getExpenseInRange(startOfMonth, now);
-    const expenseLastMonth = getExpenseInRange(startOfLastMonth, endOfLastMonth);
+    const expenseLastMonth = getExpenseInRange(
+      startOfLastMonth,
+      endOfLastMonth,
+    );
     const expenseYTD = getExpenseInRange(startOfYear, now);
 
     setFinancialData({
@@ -120,9 +129,9 @@ const FinancialDashboard = () => {
   const value = financialData[view][timeframe];
 
   return (
-    <View className="flex-1 bg-white p-6">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Top Bar */}
-      <View className="flex-row justify-between items-center mb-6">
+      <View className="flex-row justify-between items-center mb-4">
         <TouchableOpacity onPress={toggleSidebar}>
           <Entypo name="menu" size={35} color="black" />
         </TouchableOpacity>
@@ -130,7 +139,7 @@ const FinancialDashboard = () => {
           <Pressable>
             <Image
               source={require("../../assets/images/logo.png")}
-              className="w-[120px] h-[120px]"
+              className="w-[100px] h-[100px]"
               resizeMode="contain"
             />
           </Pressable>
@@ -160,8 +169,8 @@ const FinancialDashboard = () => {
               {tf === "month"
                 ? "This Month"
                 : tf === "lastMonth"
-                ? "Last Month"
-                : "YTD"}
+                  ? "Last Month"
+                  : "YTD"}
             </Text>
           </TouchableOpacity>
         ))}
@@ -182,11 +191,13 @@ const FinancialDashboard = () => {
                 v === "income"
                   ? "attach-money"
                   : v === "expenses"
-                  ? "money-off"
-                  : "receipt"
+                    ? "money-off"
+                    : "receipt"
               }
               size={24}
-              color={v === "income" ? "green" : v === "expenses" ? "red" : "blue"}
+              color={
+                v === "income" ? "green" : v === "expenses" ? "red" : "blue"
+              }
             />
             <Text
               className={`text-lg font-semibold ${
@@ -207,8 +218,8 @@ const FinancialDashboard = () => {
           {timeframe === "ytd"
             ? "Year to Date"
             : timeframe === "month"
-            ? "This Month"
-            : "Last Month"}
+              ? "This Month"
+              : "Last Month"}
           )
         </Text>
       </View>
@@ -216,13 +227,17 @@ const FinancialDashboard = () => {
       {/* Summary Section */}
       <View className="mt-8 space-y-4 p-4 bg-gray-100 rounded-lg shadow-lg">
         <View className="flex-row justify-between">
-          <Text className="text-lg font-medium text-gray-700">Gross Revenue</Text>
+          <Text className="text-lg font-medium text-gray-700">
+            Gross Revenue
+          </Text>
           <Text className="text-lg font-bold text-green-600">
             ${financialData.income.ytd.toLocaleString()}
           </Text>
         </View>
         <View className="flex-row justify-between">
-          <Text className="text-lg font-medium text-gray-700">Expense Cost</Text>
+          <Text className="text-lg font-medium text-gray-700">
+            Expense Cost
+          </Text>
           <Text className="text-lg font-bold text-red-600">
             ${financialData.expenses.ytd.toLocaleString()}
           </Text>
@@ -239,7 +254,7 @@ const FinancialDashboard = () => {
           </Text>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

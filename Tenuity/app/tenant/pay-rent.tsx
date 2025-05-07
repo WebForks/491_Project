@@ -34,7 +34,10 @@ export default function PayRent() {
 
         if (sessionError || !user) {
           console.error("Session error:", sessionError);
-          Alert.alert("Error", "Failed to retrieve user session. Please log in again.");
+          Alert.alert(
+            "Error",
+            "Failed to retrieve user session. Please log in again.",
+          );
           return;
         }
 
@@ -50,7 +53,10 @@ export default function PayRent() {
 
         if (tenantError) {
           console.error("Tenant data error:", tenantError);
-          Alert.alert("Error", "Failed to retrieve tenant details. Please try again.");
+          Alert.alert(
+            "Error",
+            "Failed to retrieve tenant details. Please try again.",
+          );
           return;
         }
 
@@ -58,7 +64,9 @@ export default function PayRent() {
 
         // Calculate the next rent due date
         const accountCreationDate = new Date(created_at);
-        const lastPaymentDate = last_payment_date ? new Date(last_payment_date) : null;
+        const lastPaymentDate = last_payment_date
+          ? new Date(last_payment_date)
+          : null;
         const today = new Date();
 
         let nextDueDate;
@@ -78,13 +86,16 @@ export default function PayRent() {
 
         if (propertiesError) {
           console.error("Property data error:", propertiesError);
-          Alert.alert("Error", "Failed to retrieve rent amount. Please try again.");
+          Alert.alert(
+            "Error",
+            "Failed to retrieve rent amount. Please try again.",
+          );
           return;
         }
 
         // Filter the data in the application
         const property = propertiesData.find(
-          (property) => property.tenant_uuid?.toString() === tenantUuid
+          (property) => property.tenant_uuid?.toString() === tenantUuid,
         );
 
         if (!property) {
@@ -107,7 +118,7 @@ export default function PayRent() {
     fetchRentDetails();
   }, []);
 
-  const handleRentPayment = async () => {
+  const local_handleRentPayment = async () => {
     try {
       if (!rentAmount || !rentDueDate) {
         Alert.alert("Error", "Rent details are not available.");
@@ -129,12 +140,19 @@ export default function PayRent() {
 
       if (updateError) {
         console.error("Error updating last payment date:", updateError);
-        Alert.alert("Error", "Failed to update payment details. Please try again.");
+        Alert.alert(
+          "Error",
+          "Failed to update payment details. Please try again.",
+        );
         return;
       }
 
       setRentDueDate(nextDueDate); // Update the state
-      Alert.alert("Success", `Payment successful! Your next payment is due on ${nextDueDate.toDateString()}.`);
+      await handleRentPayment();
+      Alert.alert(
+        "Success",
+        `Payment successful! Your next payment is due on ${nextDueDate.toDateString()}.`,
+      );
     } catch (error) {
       console.error("Error processing payment:", error);
       Alert.alert("Error", "Failed to process payment. Please try again.");
@@ -167,7 +185,14 @@ export default function PayRent() {
         </View>
 
         {/* Title */}
-        <Text style={{ fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 16 }}>
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "bold",
+            textAlign: "center",
+            marginBottom: 16,
+          }}
+        >
           Pay Rent
         </Text>
 
@@ -177,11 +202,13 @@ export default function PayRent() {
             <ActivityIndicator size="small" color="#0000ff" />
           ) : isPastDue ? (
             <Text style={{ fontSize: 16, color: "red" }}>
-              You have a past due balance of ${rentAmount?.toFixed(2)}. Please pay immediately.
+              You have a past due balance of ${rentAmount?.toFixed(2)}. Please
+              pay immediately.
             </Text>
           ) : rentAmount !== null && rentDueDate !== null ? (
             <Text style={{ fontSize: 16, color: "gray" }}>
-              Your next payment of ${rentAmount.toFixed(2)} is due on {rentDueDate.toDateString()}.
+              Your next payment of ${rentAmount.toFixed(2)} is due on{" "}
+              {rentDueDate.toDateString()}.
             </Text>
           ) : (
             <Text style={{ fontSize: 16, color: "gray" }}>
@@ -193,7 +220,7 @@ export default function PayRent() {
         {/* Pay with Stripe Button */}
         <View style={{ alignItems: "center", marginTop: 20 }}>
           <TouchableOpacity
-            onPress={handleRentPayment}
+            onPress={local_handleRentPayment}
             style={{
               backgroundColor: "#6772E5",
               paddingVertical: 16,
@@ -213,3 +240,4 @@ export default function PayRent() {
     </SafeAreaView>
   );
 }
+

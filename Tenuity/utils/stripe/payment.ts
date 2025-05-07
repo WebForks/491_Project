@@ -27,7 +27,18 @@ export async function handleRentPayment() {
     }
 
     const landlordUserId = tenantData.landlord_id;
-    const amountInCents = 50000;
+    let amountInCents = 50000;
+
+    // Get rent due
+    const { data: rent_data, error: rent_error } = await supabase
+      .from("Properties")
+      .select("rent")
+      .eq("tenant_uuid", userId)
+      .single();
+
+    amountInCents = rent_data.rent * 100;
+
+    console.log(rent_data);
 
     // 4. Get landlord's Stripe account ID
     const { data, error } = await supabase

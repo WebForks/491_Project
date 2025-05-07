@@ -111,11 +111,9 @@ export default function TenantDashboard() {
         {/* Action Buttons */}
         <View className="flex-row justify-around px-4 py-2 mb-4">
           <Link href="./pay-rent" asChild>
-            <TouchableOpacity
-              className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center"
-            >
+            <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
               <Ionicons name="cash-outline" size={24} color="white" />
-          </TouchableOpacity>
+            </TouchableOpacity>
           </Link>
           <Link href="./tnDocuments" asChild>
             <TouchableOpacity className="bg-[#4A9DFF] p-4 rounded-lg w-24 items-center">
@@ -151,13 +149,15 @@ export default function TenantDashboard() {
 
           {/* New Request Button */}
           <TouchableOpacity
-          onPress={() => router.push("./tenantMaintenance")}
-          className="flex-row items-center space-x-2 mt-3"
+            onPress={() => router.push("./tenantMaintenance")}
+            className="flex-row items-center space-x-2 mt-3"
           >
             <Ionicons name="add-outline" size={24} color="#3ab7ff" />
             <View>
               <Text className="font-semibold text-lg">New</Text>
-              <Text className="text-gray-500 text-base">Add maintenance request</Text>
+              <Text className="text-gray-500 text-base">
+                Add maintenance request
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
