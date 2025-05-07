@@ -15,6 +15,8 @@ const PropertyDetails = () => {
   const [addingTenant, setAddingTenant] = useState(false);
   const [newTenantName, setNewTenantName] = useState("");
   const [newTenantEmail, setNewTenantEmail] = useState("");
+  const [editingRent, setEditingRent] = useState(false);
+  const [newRentAmount, setNewRentAmount] = useState("");
   const [emailError, setEmailError] = useState(false);
 
   const { id } = useLocalSearchParams();
@@ -121,6 +123,29 @@ const PropertyDetails = () => {
     }
   };
   
+  const handleUpdateRent = async () => {
+    if (!newRentAmount || isNaN(Number(newRentAmount))) {
+      Alert.alert("Invalid Input", "Please enter a valid rent amount.");
+      return;
+    }
+  
+    try {
+      const { error } = await supabase
+        .from("Properties")
+        .update({ rent: parseFloat(newRentAmount) })
+        .eq("id", property.id);
+  
+      if (error) throw error;
+  
+      Alert.alert("Success", "Rent updated successfully.");
+      setEditingRent(false);
+      setNewRentAmount("");
+      await fetchProperty();
+    } catch (error) {
+      console.error("Error updating rent:", error);
+      Alert.alert("Error", "Failed to update rent.");
+    }
+  };
   
   
 
@@ -225,25 +250,34 @@ const PropertyDetails = () => {
 
             {/* Rent */}
             {property.rent && (
-              <Text className="text-lg font-semibold text-green-700 pt-2">
-                Rent: ${property.rent.toLocaleString()}
-              </Text>
+              <View className="pt-2">
+                <Text className="text-lg font-semibold text-green-700">
+                  Rent: ${property.rent.toLocaleString()}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setEditingRent(true)}
+                  className="mt-2 bg-yellow-500 px-4 py-2 rounded"
+                >
+                  <Text className="text-white text-center font-semibold">Change Rent</Text>
+                </TouchableOpacity>
+              </View>
             )}
 
-            {/* Message Button */}
-            <View className="items-end mt-4">
-              <Link href="./tenantlist" asChild>
-                <TouchableOpacity className="bg-blue-500 w-14 h-14 rounded-md absolute bottom-4 right-4 items-center justify-center shadow">
-                  <MaterialIcons name="message" size={28} color="white" />
-                </TouchableOpacity>
-              </Link>
-            </View>
+
+            
           </View>
         ) : (
           <Text className="text-red-500">Property not found.</Text>
         )}
       </ScrollView>
-
+      {/* Message Button */}
+      <View className="items-end mt-4">
+              <Link href="./tenantlist" asChild>
+                <TouchableOpacity className="bg-blue-500 w-14 h-14 rounded-md absolute bottom-12 right-4 items-center justify-center shadow">
+                  <MaterialIcons name="message" size={28} color="white" />
+                </TouchableOpacity>
+              </Link>
+            </View>
       {/* Add Tenant Modal */}
       <Modal
         visible={addingTenant}
@@ -297,13 +331,45 @@ const PropertyDetails = () => {
               >
                 <Text className="text-white">Add Tenant</Text>
               </TouchableOpacity>
-
-
-
             </View>
           </View>
         </View>
       </Modal>
+      {/* Edit Rent Modal */}
+      <Modal
+        visible={editingRent}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setEditingRent(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/50 p-4">
+          <View className="bg-white p-6 rounded-lg w-full max-w-md">
+            <Text className="text-xl font-bold mb-4">Update Rent</Text>
+            <TextInput
+              className="border border-gray-300 p-3 rounded mb-6"
+              placeholder="Enter new rent amount"
+              value={newRentAmount}
+              onChangeText={setNewRentAmount}
+              keyboardType="numeric"
+            />
+            <View className="flex-row justify-end space-x-3">
+              <TouchableOpacity
+                onPress={() => setEditingRent(false)}
+                className="bg-gray-300 px-4 py-2 rounded"
+              >
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleUpdateRent}
+                className="bg-blue-500 px-4 py-2 rounded"
+              >
+                <Text className="text-white">Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };
