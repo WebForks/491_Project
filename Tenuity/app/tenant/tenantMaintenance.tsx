@@ -183,6 +183,7 @@ export default function Maintenance() {
           tenant_uuid: tenantUuid,
           landlord_uuid: landlordUuid,
           address: address,
+          cost: 0,
           completed: false,
           created_at: new Date().toISOString(),
         },
