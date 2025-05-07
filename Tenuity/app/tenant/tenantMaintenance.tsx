@@ -185,7 +185,6 @@ export default function Maintenance() {
           address: address,
           cost: 0,
           completed: false,
-          cost: 0, // Auto set cost to 0
           created_at: new Date().toISOString(),
         },
       ]);
