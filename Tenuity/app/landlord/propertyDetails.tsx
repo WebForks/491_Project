@@ -15,6 +15,7 @@ const PropertyDetails = () => {
   const [addingTenant, setAddingTenant] = useState(false);
   const [newTenantName, setNewTenantName] = useState("");
   const [newTenantEmail, setNewTenantEmail] = useState("");
+  const [emailError, setEmailError] = useState(false);
 
   const { id } = useLocalSearchParams();
 
@@ -69,21 +70,38 @@ const PropertyDetails = () => {
 
   const handleAddTenant = async () => {
     console.log('handleAddTenant triggered');
-    
-    if (!newTenantName.trim()) {
-      Alert.alert("Error", "Please enter tenant name");
+
+    if (!newTenantEmail.trim()) {
+      Alert.alert("Error", "Please enter tenant email");
+      setEmailError(true); // Highlight email input field
       return;
     }
   
     try {
-      console.log('Adding tenant...');  
+      console.log('Adding tenant...'); 
       setAddingTenant(true);  // Set addingTenant to true when starting the process
   
+      // Step 1: Validate tenant email
+      const trimmedEmail = newTenantEmail.trim();
+      const { data: tenantData, error: tenantError } = await supabase
+        .from("Tenants")
+        .select("user_id, email") // Only select user_id and email
+        .eq("email", trimmedEmail) // Match the email exactly
+        .single();
+  
+      if (tenantError || !tenantData) {
+        setEmailError(true); // Highlight email input field
+        Alert.alert("Error", "No tenant registered with that email.");
+        return;
+      }
+  
+      // Step 2: Update the property with tenant information
       const { error } = await supabase
         .from("Properties")
         .update({
-          tenant_name: newTenantName.trim(),
-          tenant_email: newTenantEmail.trim() || null,
+          tenant_uuid: tenantData.user_id,
+          tenant_name: newTenantName, 
+          tenant_email: tenantData.email, 
         })
         .eq("id", property.id);
   
@@ -91,30 +109,15 @@ const PropertyDetails = () => {
   
       // Success logic
       Alert.alert("Success", "Tenant added successfully!");
-      
+
       // Reset fields
       setNewTenantName("");
       setNewTenantEmail("");
-      
       await fetchProperty();  // Refresh property data
-  
+      setAddingTenant(false); // Close the modal after successful addition
     } catch (error) {
       console.error("Error adding tenant:", error);
-      let errorMessage = "Failed to add tenant";
-      
-      // Handle error message types
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      } else if (error && typeof error === 'object' && 'message' in error) {
-        errorMessage = String(error.message);
-      }
-      
-      Alert.alert("Error", errorMessage);
-    } finally {
-      console.log('Process complete, setting addingTenant to false');
-      setAddingTenant(false);  // Set addingTenant back to false when done
+      Alert.alert("Failed to add tenant");
     }
   };
   
@@ -260,14 +263,25 @@ const PropertyDetails = () => {
               onChangeText={setNewTenantName}
             />
             
-            <Text className="text-lg mb-1">Tenant Email</Text>
+            <Text className="text-lg mb-1">Tenant Email*</Text>
             <TextInput
-              className="border border-gray-300 p-3 rounded mb-6"
+              className={`border p-3 rounded mb-2 ${
+                emailError ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="Enter tenant email"
               value={newTenantEmail}
-              onChangeText={setNewTenantEmail}
+              onChangeText={(text) => {
+                setNewTenantEmail(text);
+                setEmailError(false); // Reset error state on input change
+              }}
               keyboardType="email-address"
             />
+            {/* Error message for invalid tenant email */}
+            {emailError && (
+              <Text className="text-red-500 text-sm mb-4">
+                No tenant registered with that email.
+              </Text>
+            )}
             
             <View className="flex-row justify-end space-x-3">
               <TouchableOpacity
