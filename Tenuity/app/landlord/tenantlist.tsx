@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import 
-{
+import {
   View,
   Text,
   ScrollView,
@@ -15,8 +14,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useSidebar } from './_layout';
 
-type Tenant = 
-{
+type Tenant = {
   id: number;
   user_id: string;
   first_name: string;
@@ -33,7 +31,24 @@ export default function TenantListScreen() {
 
   useEffect(() => {
     const fetchTenants = async () => {
-      const { data, error } = await supabase.from('Tenants').select('*');
+      // Get current landlord user
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        console.error('Error fetching user:', userError?.message);
+        setLoading(false);
+        return;
+      }
+
+      // Only fetch tenants tied to this landlord
+      const { data, error } = await supabase
+        .from('Tenants')
+        .select('*')
+        .eq('landlord_id', user.id);
+
       if (error) {
         console.error('Error fetching tenants:', error.message);
       } else {
@@ -144,8 +159,13 @@ export default function TenantListScreen() {
                   Phone: {tenant.phone_number}
                 </Text>
               </View>
-              <Link href={{ pathname: "/landlord/landlordChat", params: { chatId: tenant.user_id } }} asChild>
-
+              <Link
+                href={{
+                  pathname: '/landlord/landlordChat',
+                  params: { chatId: tenant.user_id },
+                }}
+                asChild
+              >
                 <TouchableOpacity
                   style={{
                     backgroundColor: '#5C4DFF',

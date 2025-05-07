@@ -25,28 +25,24 @@ export default function TenantChat() {
   const [messages, setMessages] = useState<any[]>([]);
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
+  const [landlordId, setLandlordId] = useState<string | null>(null);
   const [landlord, setLandlord] = useState<any>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const flatListRef = useRef<FlatList>(null);
-  const landlordId = "55d26cd6-b542-4818-af5b-02e1967f1ac1"; // Replace dynamically if needed
 
   useEffect(() => {
-    getUserId();
+    getUserAndLandlord();
   }, []);
 
   useEffect(() => {
     let cleanup: () => void;
     const init = async () => {
-      if (userId) {
+      if (userId && landlordId) {
         await fetchMessages();
         await fetchLandlordDetails();
         const channel = supabase
           .channel("tenant-chat")
-          .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "Messages" },
-            fetchMessages,
-          )
+          .on("postgres_changes", { event: "*", schema: "public", table: "Messages" }, fetchMessages)
           .subscribe();
         cleanup = () => supabase.removeChannel(channel);
       }
@@ -54,26 +50,32 @@ export default function TenantChat() {
     init();
 
     const listener = Keyboard.addListener("keyboardDidShow", () =>
-      setTimeout(
-        () => flatListRef.current?.scrollToEnd({ animated: true }),
-        150,
-      ),
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 150)
     );
 
     return () => {
       if (cleanup) cleanup();
       listener.remove();
     };
-  }, [userId]);
+  }, [userId, landlordId]);
 
-  const getUserId = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user?.id) setUserId(user.id);
+  const getUserAndLandlord = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.id) {
+      setUserId(user.id);
+      const { data: tenant, error } = await supabase
+        .from("Tenants")
+        .select("landlord_id")
+        .eq("user_id", user.id)
+        .single();
+      if (!error && tenant?.landlord_id) {
+        setLandlordId(tenant.landlord_id);
+      }
+    }
   };
 
   const fetchLandlordDetails = async () => {
+    if (!landlordId) return;
     const { data, error } = await supabase
       .from("Landlords")
       .select("first_name, last_name, profile_pic_path")
@@ -87,17 +89,23 @@ export default function TenantChat() {
     const { data, error } = await supabase
       .from("Messages")
       .select("*")
-      .or(
-        `and(author_id.eq.${userId},recipient_id.eq.${landlordId}),and(author_id.eq.${landlordId},recipient_id.eq.${userId})`,
-      )
+      .or(`and(author_id.eq.${userId},recipient_id.eq.${landlordId}),and(author_id.eq.${landlordId},recipient_id.eq.${userId})`)
       .order("created_at", { ascending: true });
     if (!error && data) setMessages(data);
   };
 
   const sendMessage = async () => {
-    if ((!message.trim() && !imageUri) || !userId) return;
-    let imageUrl = null;
-    if (imageUri) imageUrl = await uploadImageToSupabase(imageUri);
+    if ((!message.trim() && !imageUri) || !userId || !landlordId) return;
+
+    let imageUrl: string | null = null;
+    if (imageUri) {
+      imageUrl = await uploadImageToSupabase(imageUri);
+      if (!imageUrl) {
+        console.warn("Image failed to upload. Message not sent.");
+        return;
+      }
+    }
+
     const { error } = await supabase.from("Messages").insert([
       {
         author_id: userId,
@@ -106,14 +114,12 @@ export default function TenantChat() {
         image_url: imageUrl,
       },
     ]);
+
     if (!error) {
       setMessage("");
       setImageUri(null);
       fetchMessages();
-      setTimeout(
-        () => flatListRef.current?.scrollToEnd({ animated: true }),
-        300,
-      );
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 300);
     }
   };
 
@@ -126,13 +132,21 @@ export default function TenantChat() {
       const ext = uri.split(".").pop();
       const name = `chat-images/${userId}/${Date.now()}.${ext}`;
       const buffer = decode(base64);
+
       const { error: uploadError } = await supabase.storage
         .from("chat-images")
         .upload(name, buffer, { contentType: `image/${ext}` });
-      if (uploadError) return null;
+
+      if (uploadError) {
+        console.error("Upload error:", uploadError.message);
+        return null;
+      }
+
       const { data } = supabase.storage.from("chat-images").getPublicUrl(name);
+      console.log("Image public URL:", data?.publicUrl);
       return data?.publicUrl ?? null;
-    } catch {
+    } catch (e) {
+      console.error("Upload failed:", e);
       return null;
     }
   };
@@ -140,49 +154,38 @@ export default function TenantChat() {
   const renderItem = ({ item }: any) => {
     const isOwn = item.author_id === userId;
     return (
-      <View
-        style={{
-          alignSelf: isOwn ? "flex-end" : "flex-start",
-          backgroundColor: isOwn ? "#4A9DFF" : "#EDEDED",
-          borderRadius: 16,
-          padding: 10,
-          marginVertical: 4,
-          maxWidth: "75%",
-          shadowColor: "#000",
-          shadowOpacity: 0.05,
-          shadowOffset: { width: 0, height: 1 },
-          shadowRadius: 2,
-        }}
-      >
+      <View style={{
+        alignSelf: isOwn ? "flex-end" : "flex-start",
+        backgroundColor: isOwn ? "#3B82F6" : "#ECECEC",
+
+        borderRadius: 16,
+        padding: 10,
+        marginVertical: 4,
+        maxWidth: "75%",
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowOffset: { width: 0, height: 1 },
+        shadowRadius: 2,
+      }}>
         {item.image_url && (
           <Image
             source={{ uri: item.image_url }}
-            style={{
-              width: 180,
-              height: 180,
-              borderRadius: 12,
-              marginBottom: 6,
-            }}
+            style={{ width: 180, height: 180, borderRadius: 12, marginBottom: 6 }}
             resizeMode="cover"
           />
         )}
         {!!item.content && (
-          <Text style={{ color: isOwn ? "white" : "black", fontSize: 15 }}>
+          <Text style={{ color: isOwn ? "white" : "#222", fontSize: 15 }}>
             {item.content}
           </Text>
         )}
-        <Text
-          style={{
-            fontSize: 10,
-            color: isOwn ? "#d0e1ff" : "#888",
-            alignSelf: "flex-end",
-            marginTop: 4,
-          }}
-        >
-          {new Date(item.created_at).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
+        <Text style={{
+          fontSize: 10,
+          color: isOwn ? "#dfe6ff" : "#999",
+          alignSelf: "flex-end",
+          marginTop: 4
+        }}>
+          {new Date(item.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
         </Text>
       </View>
     );
@@ -198,39 +201,34 @@ export default function TenantChat() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={{ flex: 1 }}>
             {/* HEADER */}
-            <View
-              style={{
-                backgroundColor: "#fff",
-                paddingTop: 50,
-                paddingBottom: 8,
-                borderBottomWidth: 0.5,
-                borderBottomColor: "#ddd",
-                shadowColor: "#000",
-                shadowOpacity: 0.04,
-                shadowOffset: { width: 0, height: 2 },
-                shadowRadius: 5,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingHorizontal: 20,
-                }}
-              >
+            <View style={{
+              backgroundColor: "#fff",
+              paddingTop: 50,
+              paddingBottom: 8,
+              borderBottomWidth: 0.5,
+              borderBottomColor: "#ddd",
+              shadowColor: "#000",
+              shadowOpacity: 0.04,
+              shadowOffset: { width: 0, height: 2 },
+              shadowRadius: 5,
+            }}>
+              <View style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingHorizontal: 20,
+              }}>
                 <TouchableOpacity onPress={() => router.back()}>
                   <Ionicons name="arrow-back" size={26} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => router.replace("/tenant/dashboard")}
-                >
-                  <Image
-                    source={require("../../assets/images/logo.png")}
-                    style={{ width: 100, height: 50 }}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.replace("/tenant/dashboard")}>
+                <Image
+                  source={require("../../assets/images/logo.png")}
+                  style={{ width: 100, height: 50 }}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+
                 <Link href="./profile-tenant" asChild>
                   <TouchableOpacity>
                     <AntDesign name="user" size={26} color="black" />
@@ -238,26 +236,15 @@ export default function TenantChat() {
                 </Link>
               </View>
               {landlord && (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    paddingHorizontal: 20,
-                    paddingTop: 10,
-                  }}
-                >
+                <View style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingHorizontal: 20,
+                  paddingTop: 10,
+                }}>
                   <Image
-                    source={{
-                      uri:
-                        landlord.profile_pic_path ||
-                        "https://i.pravatar.cc/150?u=default",
-                    }}
-                    style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: 9999,
-                      marginRight: 10,
-                    }}
+                    source={{ uri: landlord.profile_pic_path || "https://i.pravatar.cc/150?u=default" }}
+                    style={{ width: 38, height: 38, borderRadius: 9999, marginRight: 10 }}
                     resizeMode="cover"
                   />
                   <Text style={{ fontSize: 17, fontWeight: "bold" }}>
@@ -274,54 +261,32 @@ export default function TenantChat() {
               keyExtractor={(item) => item.id.toString()}
               renderItem={renderItem}
               contentContainerStyle={{ padding: 12, paddingBottom: 120 }}
-              onContentSizeChange={() =>
-                flatListRef.current?.scrollToEnd({ animated: true })
-              }
-              onLayout={() =>
-                setTimeout(
-                  () => flatListRef.current?.scrollToEnd({ animated: true }),
-                  300,
-                )
-              }
+              onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+              onLayout={() => setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 300)}
               keyboardShouldPersistTaps="handled"
             />
 
             {/* IMAGE PREVIEW */}
             {imageUri && (
-              <View
-                style={{
-                  padding: 10,
-                  backgroundColor: "#fff",
-                  alignItems: "center",
-                  borderTopWidth: 1,
-                  borderColor: "#eee",
-                }}
-              >
+              <View style={{ padding: 10, backgroundColor: "#fff", alignItems: "center", borderTopWidth: 1, borderColor: "#eee" }}>
                 <Image
                   source={{ uri: imageUri }}
-                  style={{
-                    width: 120,
-                    height: 120,
-                    borderRadius: 12,
-                    marginBottom: 6,
-                  }}
+                  style={{ width: 120, height: 120, borderRadius: 12, marginBottom: 6 }}
                   resizeMode="cover"
                 />
                 <Text style={{ color: "#555" }}>Image Preview</Text>
               </View>
             )}
 
-            {/* INPUT */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 10,
-                backgroundColor: "white",
-                borderTopWidth: 1,
-                borderColor: "#ddd",
-              }}
-            >
+            {/* INPUT BAR */}
+            <View style={{
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 10,
+              backgroundColor: "white",
+              borderTopWidth: 1,
+              borderColor: "#ddd",
+            }}>
               <TouchableOpacity
                 onPress={async () => {
                   const result = await ImagePicker.launchImageLibraryAsync({
@@ -334,12 +299,7 @@ export default function TenantChat() {
                   }
                 }}
               >
-                <Ionicons
-                  name="attach"
-                  size={28}
-                  color="gray"
-                  style={{ marginRight: 10 }}
-                />
+                <Ionicons name="attach" size={28} color="gray" style={{ marginRight: 10 }} />
               </TouchableOpacity>
 
               <TextInput
@@ -363,7 +323,8 @@ export default function TenantChat() {
               />
 
               <TouchableOpacity onPress={sendMessage}>
-                <Ionicons name="send" size={28} color="#4A9DFF" />
+              <Ionicons name="send" size={28} color="#3B82F6" />
+
               </TouchableOpacity>
             </View>
           </View>
